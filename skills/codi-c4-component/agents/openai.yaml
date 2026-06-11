@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi C4 Component"
+  short_description: "Author CoDi c4-component diagrams"
+  default_prompt: "Use $codi-c4-component to create a valid CoDi c4-component diagram."

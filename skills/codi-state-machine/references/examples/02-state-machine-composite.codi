@@ -1,0 +1,35 @@
+DeviceLifecycle[state-machine]:
+  - direction: LR
+  - rank_gap: 240
+  - node_gap: 88
+  - initial --> Provisioning
+  - Provisioning[state]:
+      entry-action: "allocate identity"
+  - Provisioning --> Operational:
+      trigger: "device enrolled"
+      guard: "certificate issued"
+  - Operational[composite-state]:
+      direction: TB
+      rank_gap: 120
+      node_gap: 64
+      children:
+        - Online[state]:
+            do-activity: "serve requests"
+        - Degraded[state]:
+            entry-action: "reduce traffic"
+        - Maintenance[state]:
+            entry-action: "apply update"
+        - Online --> Degraded:
+            trigger: "health check fails"
+        - Degraded --> Online:
+            trigger: "health recovers"
+        - Degraded --> Maintenance:
+            trigger: "operator drains device"
+        - Maintenance --> Online:
+            trigger: "update complete"
+  - Operational --> Retired:
+      trigger: "decommission"
+      action: "revoke credentials"
+  - Retired[state]:
+      entry-action: "archive audit trail"
+  - Retired --> final

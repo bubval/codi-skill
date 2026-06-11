@@ -1,0 +1,20 @@
+# Combined fragment coverage for alt, else, opt, loop, and critical.
+
+FragmentFlow[sequence]:
+  - User[actor]
+  - API[service]
+  - Cache[service]
+  - DB[database]
+  - sync User -> API: "GET /profile"
+  - alt "cache hit":
+      - sync API -> Cache: "get(profile)"
+      - reply Cache -> API: "profile"
+  - else "cache miss":
+      - sync API -> DB: "select profile"
+      - reply DB -> API: "profile"
+  - opt "include audit":
+      - async API -> Cache: "refresh ttl"
+  - loop "for each preference":
+      - sync API -> API: "normalize preference"
+  - critical "commit response":
+      - reply API -> User: "200 profile"

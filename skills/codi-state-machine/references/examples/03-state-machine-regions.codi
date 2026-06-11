@@ -1,0 +1,30 @@
+# Demonstrates orthogonal regions inside a composite state.
+
+DeviceSession[state-machine]:
+  - initial --> Active
+  - Active[composite-state]:
+      direction: LR
+      regions:
+        Connectivity:
+          - initial --> Offline
+          - Offline[state]
+          - Online[state]
+          - Offline --> Online:
+              trigger: "network restored"
+          - Online --> Offline:
+              trigger: "network lost"
+        Power:
+          - initial --> Battery
+          - Battery[state]
+          - Charging[state]
+          - Battery --> Charging:
+              trigger: "plugged in"
+          - Charging --> Battery:
+              trigger: "unplugged"
+  - Active --> Suspended:
+      trigger: "sleep"
+  - Suspended[state]
+  - Suspended --> Active:
+      trigger: "wake"
+  - Suspended --> final:
+      trigger: "shutdown"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi C4 Container"
+  short_description: "Author CoDi c4-container diagrams"
+  default_prompt: "Use $codi-c4-container to create a valid CoDi c4-container diagram."

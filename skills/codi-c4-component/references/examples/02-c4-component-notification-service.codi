@@ -1,0 +1,27 @@
+NotificationWorker[c4-component]:
+  - NotificationWorker[container]:
+      scope: true
+      technology: "Python worker"
+      description: "Builds and sends customer notifications"
+  - WorkerBoundary[container-boundary]:
+      label: "Notification Worker"
+      children:
+        - JobConsumer[component]:
+            tech: "Celery consumer"
+            description: "Consumes queued notification jobs"
+        - TemplateRenderer[component]:
+            tech: "Jinja renderer"
+            description: "Renders localized notification content"
+        - DeliveryClient[component]:
+            tech: "HTTP client"
+            description: "Sends rendered messages to external providers"
+  - Queue[container]: "Durable notification queue"
+  - EmailProvider[external-software-system]: "External email delivery provider"
+  - Queue --> JobConsumer:
+      label: "Delivers pending notification jobs"
+      protocol: "AMQP"
+  - JobConsumer --> TemplateRenderer: "Requests localized content"
+  - JobConsumer --> DeliveryClient: "Submits rendered message"
+  - DeliveryClient --> EmailProvider:
+      label: "Sends email request"
+      protocol: "HTTPS"

@@ -1,0 +1,12 @@
+# Notes and ref-style fragment frame.
+
+ReferenceFlow[sequence]:
+  - Browser[actor]
+  - Gateway[service]
+  - Auth[service]
+  - note over Browser, Gateway: "TLS session established"
+  - ref "AuthorizeUser(token)":
+      - sync Gateway -> Auth: "validate token"
+      - reply Auth -> Gateway: "claims"
+  - sync Browser -> Gateway: "GET /account"
+  - reply Gateway -> Browser: "account"

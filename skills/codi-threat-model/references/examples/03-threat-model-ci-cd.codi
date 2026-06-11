@@ -1,0 +1,129 @@
+# Threat model fixture covering CI/CD supply chain.
+CiCdSupplyChain[threat-model]:
+  - DeveloperZone[trust-boundary]:
+      - DeveloperLaptop[external-entity]:
+          trust-level: untrusted
+          description: "External actor or provider for CI/CD supply chain"
+      - ReleaseManager[external-entity]:
+          trust-level: untrusted
+          description: "External actor or provider for CI/CD supply chain"
+  - SourceControlZone[trust-boundary]:
+      - GitProvider[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in CI/CD supply chain"
+          threats:
+            - category: spoofing
+              severity: high
+              status: mitigated
+              mitigation: "Require signed provenance before artifact promotion"
+      - PullRequestBot[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in CI/CD supply chain"
+  - BuildZone[trust-boundary]:
+      - BuildRunner[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in CI/CD supply chain"
+      - DependencyScanner[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in CI/CD supply chain"
+      - SigningService[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in CI/CD supply chain"
+  - ArtifactZone[trust-boundary]:
+      - ArtifactRegistry[data-store]:
+          encrypted: true
+          data-classification: confidential
+          description: "Protected data store for CI/CD supply chain"
+          threats:
+            - category: information-disclosure
+              severity: critical
+              status: mitigated
+              mitigation: "Encrypt at rest and restrict access by service identity"
+      - ProvenanceStore[data-store]:
+          encrypted: true
+          data-classification: confidential
+          description: "Protected data store for CI/CD supply chain"
+  - DeveloperLaptop --> GitProvider:
+      label: "push commit"
+      protocol: HTTPS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: confidential
+      threats:
+        - category: tampering
+          severity: medium
+          status: mitigated
+          mitigation: "Require signed provenance before artifact promotion"
+  - ReleaseManager --> GitProvider:
+      label: "approve release"
+      protocol: HTTPS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - GitProvider --> PullRequestBot:
+      label: "PR event"
+      protocol: HTTPS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - GitProvider --> BuildRunner:
+      label: "build trigger"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: confidential
+  - BuildRunner --> DependencyScanner:
+      label: "scan dependencies"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - BuildRunner --> SigningService:
+      label: "sign artifact"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - SigningService --> ProvenanceStore:
+      label: "write provenance"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: confidential
+  - SigningService --> ArtifactRegistry:
+      label: "publish artifact"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - PullRequestBot --> DependencyScanner:
+      label: "policy check"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+      threats:
+        - category: repudiation
+          severity: medium
+          status: accepted
+          rationale: "Residual non-repudiation risk is accepted for fixture coverage"
+          mitigation: "Retain audit evidence and correlate request identifiers"

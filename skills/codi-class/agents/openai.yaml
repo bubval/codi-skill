@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Class"
+  short_description: "Author CoDi class diagrams"
+  default_prompt: "Use $codi-class to create a valid CoDi class diagram."

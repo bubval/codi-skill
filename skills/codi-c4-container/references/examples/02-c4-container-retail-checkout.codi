@@ -1,0 +1,40 @@
+# A C4 Container diagram for a retail checkout system.
+
+Checkout[c4-container]:
+  - Shopper[person]: "Browses products and completes checkout"
+  - Checkout[software-system]:
+      scope: true
+      description: "Coordinates cart, payment, order placement, and confirmations"
+  - CheckoutBoundary[system-boundary]:
+      label: "Checkout Software System"
+      children:
+        - WebApp[container]:
+            technology: "React"
+            description: "Delivers checkout UI and client-side validation"
+        - Api[container]:
+            technology: "Rust API"
+            description: "Validates carts, creates orders, and coordinates payment"
+        - OrderDb[database]:
+            technology: "PostgreSQL"
+            description: "Stores carts, orders, and payment attempts"
+        - Worker[container]:
+            technology: "Rust worker"
+            description: "Publishes order events and sends confirmation jobs"
+  - PaymentNetwork[external-software-system]: "External card authorization network"
+  - EmailProvider[external-software-system]: "External transactional email platform"
+  - Shopper --> WebApp: "Uses checkout pages"
+  - WebApp --> Api:
+      label: "Submits cart and payment details"
+      protocol: "HTTPS/JSON"
+  - Api --> OrderDb:
+      label: "Reads and writes carts and orders"
+      technology: "SQL"
+  - Api --> PaymentNetwork:
+      label: "Requests card authorization"
+      protocol: "HTTPS"
+  - Api --> Worker:
+      label: "Queues order-created work"
+      protocol: "AMQP"
+  - Worker --> EmailProvider:
+      label: "Sends order confirmation email"
+      protocol: "SMTP API"

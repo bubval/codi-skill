@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Flowchart"
+  short_description: "Author CoDi flowchart diagrams"
+  default_prompt: "Use $codi-flowchart to create a valid CoDi flowchart diagram."

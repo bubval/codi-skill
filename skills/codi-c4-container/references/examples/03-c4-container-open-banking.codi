@@ -1,0 +1,28 @@
+Inventory[c4-container]:
+  - StoreManager[person]: "Reviews stock levels and adjusts replenishment rules"
+  - Inventory[system]:
+      scope: true
+      description: "Tracks stock and replenishment decisions"
+  - Platform[system-boundary]:
+      label: "Inventory Platform"
+      children:
+        - AdminConsole[container]:
+            tech: "TypeScript SPA"
+            description: "Lets staff inspect stock and configure rules"
+        - InventoryApi[container]:
+            tech: "Go service"
+            description: "Serves stock state and rule changes"
+        - StockLedger[database]:
+            tech: "PostgreSQL"
+            description: "Persists stock movements and snapshots"
+  - SupplierPortal[external-software-system]: "Supplier ordering endpoint"
+  - StoreManager --> AdminConsole: "Maintains replenishment rules"
+  - AdminConsole --> InventoryApi:
+      label: "Reads stock and saves rules"
+      protocol: "HTTPS"
+  - InventoryApi --> StockLedger:
+      label: "Persists stock transactions"
+      technology: "SQL"
+  - InventoryApi --> SupplierPortal:
+      label: "Requests replenishment orders"
+      protocol: "HTTPS"

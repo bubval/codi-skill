@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi C4 Context"
+  short_description: "Author CoDi c4-context diagrams"
+  default_prompt: "Use $codi-c4-context to create a valid CoDi c4-context diagram."

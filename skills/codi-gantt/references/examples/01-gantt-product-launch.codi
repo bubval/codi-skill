@@ -1,0 +1,23 @@
+BasicProject[gantt]:
+  - timeline:
+      scale: day
+      today: 2026-06-05
+  - markers:
+      - date: 2026-06-12
+        label: "Review"
+  - Design[task]:
+      start: 2026-06-01
+      end: 2026-06-04
+      progress: 100%
+      resource: Alice
+  - Build[task]:
+      start: 2026-06-05
+      duration: 6d
+      progress: 0.35
+      baseline_start: 2026-06-04
+      baseline_end: 2026-06-10
+      resource: Bob
+  - Launch[milestone]:
+      date: 2026-06-14
+  - Design --> Build
+  - Build --> Launch

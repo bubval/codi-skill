@@ -1,0 +1,24 @@
+# Professional C4 Context diagram: healthcare patient portal.
+
+PatientPortal[c4-context]:
+  - Patient[person]: "Patient viewing records, appointments, and care-team messages"
+  - Clinician[person]: "Clinician responding to patient messages and reviewing portal activity"
+  - CareCoordinator[person]: "Coordinator managing referrals and appointment follow-up"
+  - PatientPortal[system]:
+      scope: true
+      description: "Gives patients secure access to records, appointments, messages, and care tasks"
+  - ElectronicHealthRecord[system, external]: "EHR platform storing clinical records and care-team assignments"
+  - SchedulingSystem[system, external]: "Appointment scheduling platform"
+  - IdentityProvider[system, external]: "Healthcare identity provider supporting MFA and patient verification"
+  - InsurancePortal[system, external]: "Insurance partner portal for eligibility and referral status"
+  - NotificationService[system, external]: "Notification service for appointment and message alerts"
+  - AuditArchive[system, external]: "Compliance archive storing access and disclosure events"
+  - Patient --> PatientPortal: "Views records and sends care-team messages"
+  - Clinician --> PatientPortal: "Responds to patient messages and reviews portal activity"
+  - CareCoordinator --> PatientPortal: "Coordinates referrals and appointment follow-up"
+  - PatientPortal --> ElectronicHealthRecord: "Reads clinical records and writes patient messages"
+  - PatientPortal --> SchedulingSystem: "Reads appointment availability and books visits"
+  - PatientPortal --> IdentityProvider: "Authenticates patients and care-team users"
+  - PatientPortal --> InsurancePortal: "Checks referral and eligibility status"
+  - PatientPortal --> NotificationService: "Sends appointment and message alerts"
+  - PatientPortal --> AuditArchive: "Writes patient-data access audit events"

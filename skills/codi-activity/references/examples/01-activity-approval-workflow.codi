@@ -1,0 +1,53 @@
+# An activity diagram for a CI/CD deployment pipeline.
+# Demonstrates: swimlanes as container nodes, start/end, decisions with
+# guards, fork/join for parallel work, and cross-lane control flow.
+
+DeploymentPipeline[activity]:
+  - Developer[swimlane]:
+      - PushToBranch: "Push feature branch to GitHub"
+      - OpenPR: "Create pull request, assign reviewers"
+  - CI[swimlane]:
+      - RunLinters: "ESLint, Clippy, format checks"
+      - RunUnitTests: "Jest, cargo test - ~2 min"
+      - RunIntegrationTests: "Testcontainers + real Postgres - ~5 min"
+      - BuildImage: "Multi-stage Docker build, layer caching"
+      - SecurityScan: "Trivy container scan, dependency audit"
+  - Staging[swimlane]:
+      - DeployToStaging: "Helm upgrade to staging namespace"
+      - RunSmokeTests: "Health checks, critical path E2E"
+      - ManualQAReview: "QA team verifies acceptance criteria"
+  - Production[swimlane]:
+      - DeployToProduction: "Blue-green deploy via ArgoCD"
+      - MonitorRollout: "Watch error rates, latency P99 for 10 min"
+      - Rollback: "ArgoCD reverts to previous revision"
+  - ChecksPassed[decision]
+  - VulnCheck[decision]
+  - QAApproval[decision]
+  - ErrorCheck[decision]
+  # Control flow
+  - start --> PushToBranch
+  - PushToBranch --> OpenPR
+  - OpenPR --> fork: "CI triggered"
+  - fork --> RunLinters
+  - fork --> RunUnitTests
+  - fork --> RunIntegrationTests
+  - RunLinters --> join
+  - RunUnitTests --> join
+  - RunIntegrationTests --> join
+  - join --> BuildImage
+  - BuildImage --> ChecksPassed: "All checks pass?"
+  - ChecksPassed --> OpenPR: "no - fix and re-push"
+  - ChecksPassed --> SecurityScan: "yes"
+  - SecurityScan --> VulnCheck: "Vulnerabilities found?"
+  - VulnCheck --> OpenPR: "critical - block merge"
+  - VulnCheck --> DeployToStaging: "clean"
+  - DeployToStaging --> RunSmokeTests
+  - RunSmokeTests --> ManualQAReview
+  - ManualQAReview --> QAApproval: "QA approved?"
+  - QAApproval --> OpenPR: "rejected - needs changes"
+  - QAApproval --> DeployToProduction: "approved"
+  - DeployToProduction --> MonitorRollout
+  - MonitorRollout --> ErrorCheck: "Error rate normal?"
+  - ErrorCheck --> Rollback: "no - error spike detected"
+  - ErrorCheck --> end: "yes - deploy complete"
+  - Rollback --> OpenPR: "investigate and fix"

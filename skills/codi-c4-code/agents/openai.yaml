@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi C4 Code"
+  short_description: "Author CoDi c4-code diagrams"
+  default_prompt: "Use $codi-c4-code to create a valid CoDi c4-code diagram."

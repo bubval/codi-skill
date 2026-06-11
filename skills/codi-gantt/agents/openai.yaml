@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Gantt"
+  short_description: "Author CoDi gantt diagrams"
+  default_prompt: "Use $codi-gantt to create a valid CoDi gantt diagram."

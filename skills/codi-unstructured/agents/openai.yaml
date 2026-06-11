@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Unstructured"
+  short_description: "Author CoDi unstructured diagrams"
+  default_prompt: "Use $codi-unstructured to create a valid CoDi unstructured diagram."

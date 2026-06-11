@@ -1,0 +1,35 @@
+# Focused UML activity object/data-flow fixture.
+
+LoanDocumentProcessing[activity]:
+  - start[initial-node]
+  - Intake[action]:
+      description: "Receive signed application"
+      children:
+        - ReceivedApplication[output-pin]
+  - ApplicationRecord[object-node]:
+      type: "Application"
+      state: "received"
+  - NormalizeDocuments[call-behavior-action]:
+      behavior: "Normalize PDF and image uploads"
+      children:
+        - NormalizedDocs[output-pin]
+  - DocumentBuffer[central-buffer-node]:
+      type: "Document"
+      upper-bound: 25
+  - CreditDatastore[datastore-node]:
+      type: "CreditReport"
+  - ScoreApplicant[call-operation-action]:
+      operation: "RiskEngine.score"
+      children:
+        - ScoreReport[output-pin]
+  - Complete[activity-final-node]
+  - ReceivedApplication --> ApplicationRecord:
+      type: object-flow
+  - NormalizedDocs --> DocumentBuffer:
+      type: object-flow
+  - ScoreReport --> CreditDatastore:
+      type: object-flow
+  - start --> Intake
+  - Intake --> NormalizeDocuments
+  - NormalizeDocuments --> ScoreApplicant
+  - ScoreApplicant --> Complete

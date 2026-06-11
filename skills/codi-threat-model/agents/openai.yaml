@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Threat Model"
+  short_description: "Author CoDi threat-model diagrams"
+  default_prompt: "Use $codi-threat-model to create a valid CoDi threat-model diagram."

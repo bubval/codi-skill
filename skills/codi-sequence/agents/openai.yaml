@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Sequence"
+  short_description: "Author CoDi sequence diagrams"
+  default_prompt: "Use $codi-sequence to create a valid CoDi sequence diagram."

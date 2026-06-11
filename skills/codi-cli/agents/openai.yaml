@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi CLI"
+  short_description: "Shared CLI workflow for .codi diagrams"
+  default_prompt: "Use $codi-cli to validate and render a .codi diagram."

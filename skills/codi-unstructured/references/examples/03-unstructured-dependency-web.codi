@@ -1,0 +1,52 @@
+DependencyWeb[unstructured]:
+  - algorithm: force
+  - node_gap: 70
+
+  - CLI:
+      shape: pill
+      fill: "#dbeafe"
+      stroke: "#2563eb"
+      width: 150
+  - Parser:
+      shape: hexagon
+      fill: "#e0f2fe"
+      stroke: "#0284c7"
+      width: 170
+      height: 82
+  - Renderer:
+      shape: rounded-rect
+      fill: "#dcfce7"
+      stroke: "#16a34a"
+  - Layout:
+      shape: rounded-rect
+      fill: "#fef3c7"
+      stroke: "#d97706"
+  - Validator:
+      shape: document
+      fill: "#f8fafc"
+      stroke: "#475569"
+  - Diff:
+      shape: rounded-rect
+      fill: "#f5f3ff"
+      stroke: "#7c3aed"
+  - Theme:
+      shape: rounded-rect
+      fill: "#fdf2f8"
+      stroke: "#db2777"
+  - Fixtures:
+      shape: cylinder
+      fill: "#fffbeb"
+      stroke: "#ca8a04"
+
+  - CLI --> Parser
+  - CLI --> Renderer
+  - Parser --> Validator
+  - Parser --> Layout
+  - Layout --> Renderer
+  - Theme --> Renderer
+  - Diff --> Renderer
+  - Fixtures --> Validator
+  - Fixtures --> Renderer
+  - Parser <--> Diff:
+      label: "normalized graph"
+      stroke: "#7c3aed"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi State Machine"
+  short_description: "Author CoDi state-machine diagrams"
+  default_prompt: "Use $codi-state-machine to create a valid CoDi state-machine diagram."

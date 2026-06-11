@@ -1,0 +1,77 @@
+# A class diagram modeling a notification delivery system.
+# Demonstrates: classes with attributes and methods, visibility prefixes,
+# interfaces, enums, inheritance, composition, aggregation, and dependency.
+
+NotificationDomain[class]:
+  - Notification:
+      - "+ id: UUID"
+      - "+ recipient: User"
+      - "+ channel: Channel"
+      - "+ template: NotificationTemplate"
+      - "+ status: DeliveryStatus"
+      - "+ scheduledAt: DateTime?"
+      - "+ sentAt: DateTime?"
+      - "+ send(): DeliveryResult"
+      - "+ cancel(): boolean"
+      - "- validateRecipient(): void"
+      - "- resolveChannel(): Channel"
+  - NotificationTemplate:
+      - "+ id: UUID"
+      - "+ name: String"
+      - "+ body: String"
+      - "+ variables: String[]"
+      - "+ render(context: Map): String"
+  - DeliveryResult:
+      - "+ success: boolean"
+      - "+ messageId: String?"
+      - "+ error: String?"
+      - "+ retryable: boolean"
+  - Channel[interface]:
+      - "+ send(recipient: User, content: String): DeliveryResult"
+      - "+ supports(preference: UserPreference): boolean"
+  - EmailChannel:
+      - "+ smtpHost: String"
+      - "- apiKey: String"
+      - "+ send(recipient: User, content: String): DeliveryResult"
+      - "+ supports(preference: UserPreference): boolean"
+  - SmsChannel:
+      - "+ provider: String"
+      - "- accountSid: String"
+      - "+ send(recipient: User, content: String): DeliveryResult"
+      - "+ supports(preference: UserPreference): boolean"
+  - PushChannel:
+      - "+ platform: String"
+      - "- serviceKey: String"
+      - "+ send(recipient: User, content: String): DeliveryResult"
+      - "+ supports(preference: UserPreference): boolean"
+  - DeliveryStatus[enum]:
+      - PENDING
+      - SCHEDULED
+      - SENT
+      - DELIVERED
+      - FAILED
+      - CANCELLED
+  - UserPreference[enum]:
+      - EMAIL
+      - SMS
+      - PUSH
+      - NONE
+  # Relationships
+  - EmailChannel --> Channel:
+      type: implements
+  - SmsChannel --> Channel:
+      type: implements
+  - PushChannel --> Channel:
+      type: implements
+  - Notification --> NotificationTemplate:
+      label: "renders with"
+      type: composition
+  - Notification --> Channel:
+      label: "delivers via"
+      type: aggregation
+  - Notification --> DeliveryStatus:
+      label: "tracks"
+      type: association
+  - Notification --> DeliveryResult:
+      label: "produces"
+      type: dependency

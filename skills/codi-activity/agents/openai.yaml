@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Activity"
+  short_description: "Author CoDi activity diagrams"
+  default_prompt: "Use $codi-activity to create a valid CoDi activity diagram."

@@ -1,0 +1,24 @@
+# Professional C4 Context diagram: IoT fleet management platform.
+
+FleetManagement[c4-context]:
+  - FleetOperator[person]: "Operations user monitoring vehicle health and location"
+  - FieldTechnician[person]: "Technician resolving device and firmware issues"
+  - CustomerAdmin[person]: "Customer administrator reviewing fleet utilization"
+  - FleetManagement[system]:
+      scope: true
+      description: "Manages vehicle telemetry, alerts, firmware rollout, and fleet operations workflows"
+  - DeviceGateway[system, external]: "IoT gateway receiving telemetry from vehicle devices"
+  - MapProvider[system, external]: "External map and geocoding provider"
+  - AlertingPlatform[system, external]: "Alerting platform for operational incidents"
+  - FirmwareRepository[system, external]: "Artifact repository hosting signed firmware packages"
+  - BillingPlatform[system, external]: "Billing platform calculating fleet usage charges"
+  - CustomerPortal[system, external]: "Customer-facing portal showing fleet utilization"
+  - FleetOperator --> FleetManagement: "Monitors fleet health and dispatches operational actions"
+  - FieldTechnician --> FleetManagement: "Reviews device diagnostics and schedules firmware rollout"
+  - CustomerAdmin --> FleetManagement: "Reviews utilization and device inventory"
+  - DeviceGateway --> FleetManagement: "Streams telemetry, location, and device health events"
+  - FleetManagement --> MapProvider: "Requests geocoding and route visualization data"
+  - FleetManagement --> AlertingPlatform: "Creates alerts for vehicle and device incidents"
+  - FleetManagement --> FirmwareRepository: "Requests signed firmware release metadata"
+  - FleetManagement --> BillingPlatform: "Reports billable fleet usage metrics"
+  - FleetManagement --> CustomerPortal: "Publishes customer fleet utilization summaries"

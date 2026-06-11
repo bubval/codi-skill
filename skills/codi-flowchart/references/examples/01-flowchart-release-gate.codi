@@ -1,0 +1,14 @@
+ReleaseGate[flowchart]:
+  - direction: LR
+  - Draft[process]: "Author prepares the change"
+  - Review[decision]: "Peer review approved?"
+  - Build[process]: "Run CI build and tests"
+  - SecurityScan[process]: "Run dependency and container checks"
+  - Release[terminal]: "Publish release"
+  - Rework[process]: "Fix feedback"
+  - Draft --> Review: "submit"
+  - Review --> Build: "approved"
+  - Review --> Rework: "changes requested"
+  - Rework --> Draft: "update"
+  - Build --> SecurityScan: "artifact"
+  - SecurityScan --> Release: "clear"
