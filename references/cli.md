@@ -2,6 +2,23 @@
 
 Use the `codi` CLI when it is available on `PATH`. If it is not available, author or edit `.codi` source from the references and report that validation/rendering could not be run.
 
+## Help
+
+Use the installed CLI help as the source of truth for command syntax:
+
+```bash
+codi help
+codi help render
+codi help validate
+codi help scan
+codi help version save
+codi help branch switch
+codi <command> --help
+```
+
+When generated instructions conflict with `codi help`, trust `codi help`
+because it reflects the installed binary.
+
 ## Validate
 
 Parse and validate source:

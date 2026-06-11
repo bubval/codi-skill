@@ -25,7 +25,7 @@ Prefer SVG for documentation, review, and regression artifacts. Use PNG only whe
 - Syntax, YAML shape, bracket annotations, arrows, and nesting: `references/grammar.md`
 - Diagram type selection, node vocabulary, edge vocabulary, and type-specific examples: `references/diagram-types.md`
 - Diagnostics, strict mode, common failures, and repair strategy: `references/validation.md`
-- CLI commands for validate, render, scan, expand, diff, and test: `references/cli.md`
+- CLI commands for help, validate, render, scan, expand, diff, and test: `references/cli.md`
 - Output size, aspect ratio, themes, scene detail, SVG, PNG, and focus rendering: `references/rendering-and-scaling.md`
 - Concrete source examples: `references/examples/*.codi`
 
@@ -51,6 +51,18 @@ Before promising rendered output, verify that the `codi` CLI is available:
 ```bash
 scripts/codi-doctor.sh
 ```
+
+Before using command flags from memory, prefer the installed CLI's own help:
+
+```bash
+codi help
+codi help render
+codi help validate
+codi help scan
+```
+
+Use `codi help <command>` whenever a command fails because of unknown flags,
+missing arguments, or suspected version drift.
 
 If the CLI is missing, still author or edit `.codi` source from the bundled references, but tell the user validation/rendering could not be run locally.
 
