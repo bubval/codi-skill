@@ -1,0 +1,128 @@
+# Threat model fixture covering file upload scanning.
+FileUploadScanning[threat-model]:
+  - UserZone[trust-boundary]:
+      - CustomerBrowser[external-entity]:
+          trust-level: untrusted
+          description: "External actor or provider for file upload scanning"
+      - SupportAgent[external-entity]:
+          trust-level: untrusted
+          description: "External actor or provider for file upload scanning"
+  - UploadEdge[trust-boundary]:
+      - UploadGateway[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in file upload scanning"
+          threats:
+            - category: spoofing
+              severity: high
+              status: mitigated
+              mitigation: "Quarantine uploads until scanner and classifier pass"
+      - UploadPolicy[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in file upload scanning"
+  - ScanningZone[trust-boundary]:
+      - QuarantineBucket[data-store]:
+          encrypted: true
+          data-classification: confidential
+          description: "Protected data store for file upload scanning"
+          threats:
+            - category: information-disclosure
+              severity: critical
+              status: mitigated
+              mitigation: "Encrypt at rest and restrict access by service identity"
+      - MalwareScanner[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in file upload scanning"
+      - ContentClassifier[process]:
+          technology: "service"
+          privilege-level: elevated
+          controls: ["least privilege", "audit logging"]
+          description: "Process participating in file upload scanning"
+  - StorageZone[trust-boundary]:
+      - CleanObjectStore[data-store]:
+          encrypted: true
+          data-classification: confidential
+          description: "Protected data store for file upload scanning"
+      - MetadataDB[data-store]:
+          encrypted: true
+          data-classification: confidential
+          description: "Protected data store for file upload scanning"
+  - CustomerBrowser --> UploadGateway:
+      label: "upload file"
+      protocol: HTTPS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: confidential
+      threats:
+        - category: tampering
+          severity: medium
+          status: mitigated
+          mitigation: "Quarantine uploads until scanner and classifier pass"
+  - SupportAgent --> UploadGateway:
+      label: "support upload"
+      protocol: HTTPS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - UploadGateway --> UploadPolicy:
+      label: "policy check"
+      protocol: HTTPS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - UploadGateway --> QuarantineBucket:
+      label: "quarantine object"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: confidential
+  - QuarantineBucket --> MalwareScanner:
+      label: "scan object"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - MalwareScanner --> ContentClassifier:
+      label: "classify safe file"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - ContentClassifier --> CleanObjectStore:
+      label: "promote object"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: confidential
+  - ContentClassifier --> MetadataDB:
+      label: "write metadata"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+  - UploadGateway --> MetadataDB:
+      label: "upload record"
+      protocol: mTLS
+      encrypted: true
+      authenticated: true
+      data: "scenario data and control metadata"
+      data-classification: internal
+      threats:
+        - category: repudiation
+          severity: medium
+          status: accepted
+          rationale: "Residual non-repudiation risk is accepted for fixture coverage"
+          mitigation: "Retain audit evidence and correlate request identifiers"

@@ -1,0 +1,28 @@
+CheckoutServiceCode[c4-code]:
+  - CheckoutServiceComponent[component]:
+      scope: true
+      technology: "Rust component"
+      description: "Coordinates checkout domain operations"
+  - Domain[component-boundary]:
+      label: "Checkout Service Code"
+      children:
+        - CheckoutService[class]:
+          - "+ startCheckout(cartId: CartId): CheckoutResult"
+          - "- authorizePayment(order: Order): Authorization"
+        - PaymentGateway[interface]:
+          - "+ authorize(request: AuthorizationRequest): Authorization"
+        - OrderRepository[interface]:
+          - "+ save(order: Order): void"
+        - CheckoutResult[enum]:
+          - "Authorized"
+          - "Rejected"
+          - "RequiresReview"
+  - CheckoutService --> PaymentGateway:
+      type: dependency
+      label: "Authorizes payment"
+  - CheckoutService --> OrderRepository:
+      type: dependency
+      label: "Persists accepted order"
+  - CheckoutService --> CheckoutResult:
+      type: dependency
+      label: "Returns workflow outcome"

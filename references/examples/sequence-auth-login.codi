@@ -1,0 +1,7 @@
+# Canonical sync call and reply with declared lifelines.
+
+LoginBasic[sequence]:
+  - User[actor]
+  - API[service]
+  - sync User -> API: "login(credentials)"
+  - reply API -> User: "token"

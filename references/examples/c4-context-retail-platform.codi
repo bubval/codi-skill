@@ -1,0 +1,26 @@
+# Professional C4 Context diagram: retail checkout platform.
+
+RetailCheckout[c4-context]:
+  - OnlineShopper[person]: "Customer buying products through the web or mobile storefront"
+  - CustomerSupportAgent[person]: "Support agent helping customers with checkout and payment issues"
+  - FraudAnalyst[person]: "Risk analyst reviewing high-value or suspicious orders"
+  - RetailCheckout[system]:
+      scope: true
+      description: "Coordinates checkout, payment authorization, tax, fraud checks, and order submission"
+  - Storefront[system, external]: "Web and mobile commerce experience that starts checkout"
+  - PaymentProcessor[system, external]: "External payment processor authorizing card and wallet payments"
+  - TaxService[system, external]: "Tax calculation platform for regional sales tax"
+  - FraudPlatform[system, external]: "Fraud scoring platform for order risk decisions"
+  - OrderManagement[system, external]: "Order management system receiving accepted orders"
+  - WarehousePlatform[system, external]: "Warehouse fulfillment platform receiving pick requests"
+  - EmailService[system, external]: "Transactional email provider for receipts and failure notices"
+  - OnlineShopper --> RetailCheckout: "Submits shipping, billing, and payment details"
+  - CustomerSupportAgent --> RetailCheckout: "Looks up checkout attempts and payment failures"
+  - FraudAnalyst --> RetailCheckout: "Reviews risky checkout decisions"
+  - Storefront --> RetailCheckout: "Starts checkout sessions and submits cart context"
+  - RetailCheckout --> PaymentProcessor: "Requests payment authorization and capture"
+  - RetailCheckout --> TaxService: "Requests sales tax calculation for shipping address"
+  - RetailCheckout --> FraudPlatform: "Requests fraud risk score before order placement"
+  - RetailCheckout --> OrderManagement: "Submits accepted orders for lifecycle management"
+  - RetailCheckout --> WarehousePlatform: "Sends fulfillment-ready pick requests"
+  - RetailCheckout --> EmailService: "Requests receipts and checkout failure notifications"

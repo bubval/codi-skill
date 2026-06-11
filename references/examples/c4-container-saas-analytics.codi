@@ -1,0 +1,46 @@
+AnalyticsPlatform[c4-container]:
+  - DataAnalyst[person]: "Builds dashboards and investigates metric anomalies"
+  - ProductManager[person]: "Consumes dashboards and scheduled reports"
+  - AnalyticsPlatform[software-system]:
+      scope: true
+      description: "Ingests events, models metrics, and serves analytics"
+  - AnalyticsBoundary[system-boundary]:
+      label: "Analytics Platform"
+      children:
+        - IngestionApi[container]:
+            technology: "Kotlin service"
+            description: "Receives product events and normalizes payloads"
+        - StreamProcessor[container]:
+            technology: "Flink"
+            description: "Aggregates events into metric-ready streams"
+        - Warehouse[database]:
+            technology: "Snowflake"
+            description: "Stores curated analytical tables"
+        - DashboardApp[container]:
+            technology: "Next.js"
+            description: "Presents dashboards and exports"
+        - ReportScheduler[container]:
+            technology: "Python worker"
+            description: "Builds and sends scheduled reports"
+  - EventBus[external-software-system]: "Kafka event bus owned by product teams"
+  - EmailService[external-software-system]: "External email delivery platform"
+  - DataAnalyst --> DashboardApp: "Explores metrics and exports CSVs"
+  - ProductManager --> DashboardApp: "Views dashboards and report history"
+  - EventBus --> IngestionApi:
+      label: "Delivers product events"
+      protocol: "Kafka"
+  - IngestionApi --> StreamProcessor:
+      label: "Publishes normalized events"
+      protocol: "Kafka"
+  - StreamProcessor --> Warehouse:
+      label: "Writes modeled metric tables"
+      technology: "SQL"
+  - DashboardApp --> Warehouse:
+      label: "Queries curated metrics"
+      technology: "SQL"
+  - ReportScheduler --> Warehouse:
+      label: "Reads scheduled report data"
+      technology: "SQL"
+  - ReportScheduler --> EmailService:
+      label: "Sends report digest"
+      protocol: "HTTPS"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi"
+  short_description: "Author and render .codi diagrams"
+  default_prompt: "Use $codi to create and validate a CoDi architecture diagram."
