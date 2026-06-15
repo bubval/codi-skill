@@ -383,8 +383,16 @@ Node types:
 - `class`
 - `interface`
 - `enum`
+- `datatype`
 - `package`
-- related class-like aliases handled by the renderer and validator
+
+Use `datatype` for named value types, alias-like types, and callable function types:
+
+```yaml
+- senderFunc[datatype, function]:
+    - "+ call(alerts ...*notifier.Alert)"
+    - "+ Send(alerts ...*notifier.Alert)"
+```
 
 Members:
 

@@ -13,6 +13,7 @@ Name[class]:
 - `class`
 - `interface`
 - `enum`
+- `datatype`
 - `package`
 
 ## Valid Edge Types

@@ -1,6 +1,6 @@
 ---
 name: codi-class
-description: Author, edit, validate, render, and troubleshoot CoDi `class` diagrams. Use for UML class, interface, enum, and package diagrams, including scanner-generated code structure. Assumes the `codi-cli` skill is installed for shared CLI commands, validation, rendering, and common .codi grammar.
+description: Author, edit, validate, render, and troubleshoot CoDi `class` diagrams. Use for UML class, interface, enum, datatype, and package diagrams, including scanner-generated code structure. Assumes the `codi-cli` skill is installed for shared CLI commands, validation, rendering, and common .codi grammar.
 ---
 
 # CoDi Class
@@ -11,7 +11,7 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 
 ## Use This Diagram Type For
 
-- You need static object/code structure with classes, interfaces, enums, packages, members, and relationships.
+- You need static object/code structure with classes, interfaces, enums, datatypes, packages, members, and relationships.
 - You need association details such as roles, multiplicity, navigability, composition, or aggregation.
 - You want to visualize scanner-generated model relationships.
 
