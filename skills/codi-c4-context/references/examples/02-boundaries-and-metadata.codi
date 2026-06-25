@@ -1,0 +1,26 @@
+# C4 context with boundaries, metadata, protocols, and bidirectional conversation.
+
+OpenBankingContext[c4-context]:
+  - Customer[person]: "Connects bank accounts to budgeting tools"
+  - SupportAgent[person]: "Troubleshoots account linking issues"
+  - OpenBanking[system]:
+      scope: true
+      description: "Aggregates bank account data through consented APIs"
+  - PartnerBoundary[enterprise-boundary]:
+      label: "External Partners"
+      children:
+        - BankApi[system, external]:
+            description: "Bank account and transaction API"
+        - IdentityProvider[system, external]:
+            description: "OIDC identity provider"
+  - Customer --> OpenBanking:
+      label: "Grants data sharing consent"
+      protocol: "HTTPS"
+  - OpenBanking --> BankApi:
+      label: "Fetches account balances"
+      protocol: "HTTPS/OAuth2"
+  - OpenBanking --> IdentityProvider:
+      label: "Validates login session"
+      protocol: "OIDC"
+  - SupportAgent --> OpenBanking: "Reviews support case context"
+  - OpenBanking --> SupportAgent: "Shows consent and account-link status"

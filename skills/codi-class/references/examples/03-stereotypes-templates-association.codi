@@ -1,0 +1,40 @@
+# Class diagram with stereotypes, template parameters, navigability, and association class.
+
+RepositoryPattern[class]:
+  - Repository[interface]:
+      stereotypes: ["port"]
+      template_parameters:
+        - Entity
+      members:
+        - "+ findById(id: UUID): User?"
+        - "+ save(entity: User): void"
+  - UserRepository[class]:
+      stereotypes: ["adapter"]
+      members:
+        - "- db: Database"
+        - "+ metrics: QueryMetrics"
+        - "+ findById(id: UUID): User?"
+        - "+ save(entity: User): void"
+  - User[class]:
+      members:
+        - "+ id: UUID"
+        - "+ email: String"
+  - Database[class]:
+      members:
+        - "+ query(sql: String): String"
+  - QueryMetrics[class]:
+      members:
+        - "+ durationMs: Int"
+        - "+ rowCount: Int"
+  - UserRepository --> Repository:
+      type: implements
+  - UserRepository --> User:
+      type: association
+      label: "loads"
+      navigability: target
+  - UserRepository --> Database:
+      type: dependency
+      label: "queries"
+  - UserRepository --> QueryMetrics:
+      type: association
+      label: "records"

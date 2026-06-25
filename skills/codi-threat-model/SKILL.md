@@ -35,6 +35,6 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-threat-model-file-upload.codi`
-- `references/examples/02-threat-model-oidc-flow.codi`
-- `references/examples/03-threat-model-ci-cd.codi`
+- `references/examples/01-boundaries-and-data-flows.codi`
+- `references/examples/02-nested-boundaries-and-controls.codi`
+- `references/examples/03-auth-webhook-and-queue.codi`

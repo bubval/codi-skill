@@ -1,0 +1,27 @@
+# Flowchart with process, decision, terminal nodes, labels, and direction.
+
+ReleaseGate[flowchart]:
+  - direction: LR
+  - rank_gap: 160
+  - Draft[terminal]:
+      label: "Draft change"
+  - Review[process]:
+      label: "Review change"
+  - Tests[process]:
+      label: "Run checks"
+  - Approved[decision]:
+      label: "Approved?"
+  - Deploy[process]:
+      label: "Deploy"
+  - Rework[process]:
+      label: "Rework"
+  - Done[terminal]:
+      label: "Done"
+  - Draft --> Review: "submit"
+  - Review --> Tests: "approved by reviewer"
+  - Tests --> Approved: "checks complete"
+  - Approved --> Deploy: "yes"
+  - Approved --> Rework: "no"
+  - Rework --> Review: "resubmit"
+  - Deploy --> Done: "released"
+

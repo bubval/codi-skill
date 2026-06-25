@@ -1,0 +1,37 @@
+# C4 container diagram with a system boundary and technology/protocol metadata.
+
+AnalyticsContainers[c4-container]:
+  - Analyst[person]: "Explores product metrics"
+  - AnalyticsPlatform[software-system]:
+      scope: true
+      description: "Ingests events and serves analytics"
+  - AnalyticsBoundary[system-boundary]:
+      label: "Analytics Platform"
+      children:
+        - IngestionApi[container]:
+            technology: "Kotlin service"
+            description: "Receives event batches"
+        - StreamProcessor[container]:
+            technology: "Flink"
+            description: "Aggregates events into metrics"
+        - Warehouse[database]:
+            technology: "Snowflake"
+            description: "Stores modeled tables"
+        - DashboardApp[container]:
+            technology: "Next.js"
+            description: "Serves dashboards"
+  - EventBus[external-software-system]: "Kafka cluster"
+  - Analyst --> DashboardApp: "Builds dashboards"
+  - EventBus --> IngestionApi:
+      label: "Delivers product events"
+      protocol: "Kafka"
+  - IngestionApi --> StreamProcessor:
+      label: "Publishes normalized events"
+      protocol: "Kafka"
+  - StreamProcessor --> Warehouse:
+      label: "Writes metric tables"
+      technology: "SQL"
+  - DashboardApp --> Warehouse:
+      label: "Queries metrics"
+      technology: "SQL"
+

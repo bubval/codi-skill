@@ -16,7 +16,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 WORKSPACE = ROOT.parent
 DOCS = WORKSPACE / "codi-docs"
-DIAGRAM_DOCS = DOCS / "language" / "diagrams"
+DIAGRAM_DOCS = DOCS / "diagrams"
+# Examples are grouped per diagram type: examples/<diagram-type>/NN-name.codi
 EXAMPLES = DIAGRAM_DOCS / "examples"
 
 
@@ -148,7 +149,7 @@ DIAGRAMS = [
             "Sequence directives include `sync`, `call`, `async`, `reply`, `create`, `destroy`, `found`, `lost`, and `self`.",
             "Lifecycle directives include `activate X`, `deactivate X`, and `destroy X`.",
             "Notes use `note over X`, `note left of X`, or `note right of X`.",
-            "Fragments use `alt`, `else`, `opt`, `loop`, `par`, and `ref` list items.",
+            "Fragments use `alt`, `else`, `opt`, `loop`, `par`, `break`, `critical`, `neg`, `assert`, `strict`, `seq`, `ignore`, `consider`, and `ref` list items.",
         ],
         validation_notes=[
             "Every message endpoint must be a declared lifeline unless the directive explicitly models found/lost messages.",
@@ -162,9 +163,9 @@ DIAGRAMS = [
             "Render target aspect ratio pads the output but does not change event order.",
         ],
         examples=[
-            "sequence-auth-login.codi",
-            "sequence-lifecycle-fragments.codi",
-            "sequence-notes-replies.codi",
+            "01-basic-messages-lifecycle.codi",
+            "02-fragments-notes-refs.codi",
+            "03-parallel-and-boundary.codi",
         ],
     ),
     DiagramSkill(
@@ -221,9 +222,9 @@ DIAGRAMS = [
             "Wide/tall render targets can tune spacing and spread.",
         ],
         examples=[
-            "unstructured-service-map.codi",
-            "unstructured-incident-map.codi",
-            "unstructured-dependency-web.codi",
+            "01-freeform-groups.codi",
+            "02-styling-and-edge-styles.codi",
+            "03-layout-affinity.codi",
         ],
     ),
     DiagramSkill(
@@ -275,9 +276,8 @@ DIAGRAMS = [
             "Explicit `direction` wins over render target direction hints.",
         ],
         examples=[
-            "flowchart-release-gate.codi",
-            "flowchart-error-handling.codi",
-            "flowchart-nested-process.codi",
+            "01-process-flow.codi",
+            "02-nested-groups-and-styling.codi",
         ],
     ),
     DiagramSkill(
@@ -368,9 +368,9 @@ DIAGRAMS = [
             "Source nesting controls partition membership.",
         ],
         examples=[
-            "activity-approval-workflow.codi",
-            "activity-object-flow.codi",
-            "activity-swimlane-handoff.codi",
+            "01-control-flow.codi",
+            "02-actions-pins-object-flow.codi",
+            "03-lanes-regions.codi",
         ],
     ),
     DiagramSkill(
@@ -446,9 +446,9 @@ DIAGRAMS = [
             "Composite states and regions render as nested structures.",
         ],
         examples=[
-            "state-machine-order.codi",
-            "state-machine-composite.codi",
-            "state-machine-regions.codi",
+            "01-basic-lifecycle.codi",
+            "02-pseudostates-composite.codi",
+            "03-regions-internal-transitions.codi",
         ],
     ),
     DiagramSkill(
@@ -502,9 +502,9 @@ DIAGRAMS = [
             "Uses target-aware layout direction, spacing, compact packing, and candidate scoring when eligible.",
         ],
         examples=[
-            "class-domain-model.codi",
-            "class-association-details.codi",
-            "class-interface-contracts.codi",
+            "01-members-interfaces-enums.codi",
+            "02-relationships-multiplicity.codi",
+            "03-stereotypes-templates-association.codi",
         ],
     ),
     DiagramSkill(
@@ -546,9 +546,8 @@ DIAGRAMS = [
             "Wide/tall render targets can hint direction when no explicit `direction` is set.",
         ],
         examples=[
-            "c4-context-retail-platform.codi",
-            "c4-context-healthcare-portal.codi",
-            "c4-context-iot-fleet.codi",
+            "01-saas-context.codi",
+            "02-boundaries-and-metadata.codi",
         ],
     ),
     DiagramSkill(
@@ -587,9 +586,8 @@ DIAGRAMS = [
         ],
         layout_notes=["Uses C4 boundary-aware graph layout and target-aware direction hints."],
         examples=[
-            "c4-container-saas-analytics.codi",
-            "c4-container-retail-checkout.codi",
-            "c4-container-open-banking.codi",
+            "01-system-containers.codi",
+            "02-boundary-and-technology.codi",
         ],
     ),
     DiagramSkill(
@@ -627,9 +625,8 @@ DIAGRAMS = [
         ],
         layout_notes=["Uses C4 boundary-aware graph layout and target-aware direction hints."],
         examples=[
-            "c4-component-payment-service.codi",
-            "c4-component-notification-service.codi",
-            "c4-component-ingestion-service.codi",
+            "01-service-components.codi",
+            "02-container-boundary.codi",
         ],
     ),
     DiagramSkill(
@@ -667,9 +664,8 @@ DIAGRAMS = [
         ],
         layout_notes=["Uses class/code element layout with target-aware compact packing."],
         examples=[
-            "c4-code-payment-module.codi",
-            "c4-code-event-handler.codi",
-            "c4-code-repository-layer.codi",
+            "01-modules-functions-tables.codi",
+            "02-members-and-boundaries.codi",
         ],
     ),
     DiagramSkill(
@@ -729,9 +725,9 @@ DIAGRAMS = [
         ],
         layout_notes=["Uses trust-boundary/data-flow layout and boundary-aware packing."],
         examples=[
-            "threat-model-file-upload.codi",
-            "threat-model-oidc-flow.codi",
-            "threat-model-ci-cd.codi",
+            "01-boundaries-and-data-flows.codi",
+            "02-nested-boundaries-and-controls.codi",
+            "03-auth-webhook-and-queue.codi",
         ],
     ),
     DiagramSkill(
@@ -793,9 +789,147 @@ DIAGRAMS = [
         ],
         layout_notes=["Renders a Gantt-specific table and timeline payload rather than generic node boxes."],
         examples=[
-            "gantt-product-launch.codi",
-            "gantt-resource-plan.codi",
-            "gantt-critical-path.codi",
+            "01-basic-tasks.codi",
+            "02-groups-milestones-resources.codi",
+            "03-calendars-dependencies-critical-path.codi",
+        ],
+    ),
+    DiagramSkill(
+        name="codi-deployment",
+        title="CoDi Deployment",
+        diagram_type="deployment",
+        purpose="infrastructure and runtime deployment topology across clouds, regions, networks, clusters, namespaces, workloads, data stores, routing, and the relationships between them.",
+        choose_when=[
+            "You need to show where software runs: cloud/region/zone, networks, clusters, namespaces, nodes, and workloads.",
+            "You need Kubernetes-style placement (deployments, pods, containers, jobs, cronjobs) and namespace-scoped resources.",
+            "You need traffic and placement relationships such as routes-to, connects-to, mounts, uses-secret, and scheduled-on.",
+        ],
+        avoid_when=[
+            "You need logical system/container architecture rather than physical placement; use C4.",
+            "You need security data-flow analysis with STRIDE threats; use threat-model.",
+        ],
+        node_types=[
+            "cloud",
+            "region",
+            "zone",
+            "availability-zone",
+            "edge-location",
+            "network",
+            "vpc",
+            "subnet",
+            "security-group",
+            "firewall",
+            "private-link",
+            "vpn",
+            "cluster",
+            "namespace",
+            "node-pool",
+            "node",
+            "workload",
+            "deployment",
+            "statefulset",
+            "daemonset",
+            "job",
+            "cronjob",
+            "pod",
+            "container",
+            "service",
+            "ingress",
+            "gateway",
+            "config-map",
+            "secret",
+            "volume",
+            "persistent-volume",
+            "persistent-volume-claim",
+            "load-balancer",
+            "api-gateway",
+            "database",
+            "cache",
+            "queue",
+            "topic",
+            "bucket",
+            "object-store",
+            "function",
+            "registry",
+            "identity-provider",
+            "dns",
+            "cdn",
+            "external-system",
+        ],
+        edge_types=[
+            "hosts",
+            "runs",
+            "deploys-to",
+            "contains",
+            "scheduled-on",
+            "routes-to",
+            "calls",
+            "connects-to",
+            "exposes",
+            "forwards-to",
+            "reads-from",
+            "writes-to",
+            "publishes-to",
+            "subscribes-to",
+            "mounts",
+            "uses-secret",
+            "uses-config",
+            "pulls-image-from",
+            "allows",
+            "denies",
+            "terminates-tls",
+            "authenticates-with",
+        ],
+        diagram_props=LAYOUT_PROPS,
+        node_props=[
+            *COMMON_NODE_PROPS,
+            ("children", "list", "Nested resources inside containers such as clouds, networks, clusters, namespaces, and workloads."),
+            ("badge", "string", "Optional compact node badge."),
+            ("provider", "aws | azure | gcp | k8s | generic", "Provider hint."),
+            ("platform", "kubernetes | vm | serverless | managed", "Runtime platform."),
+            ("environment", "string", "Deployment environment such as prod or staging."),
+            ("region", "string", "Cloud region."),
+            ("zone", "string", "Cloud zone."),
+            ("replicas", "number", "Replica count on workload nodes."),
+            ("image", "string", "Container image on workload/container nodes."),
+            ("version", "string", "Deployed version on workload/container nodes."),
+            ("public", "boolean", "Publicly reachable resource."),
+            ("encrypted", "boolean", "Encrypted resource (expected on databases)."),
+            ("managed", "boolean", "Managed service marker."),
+        ],
+        edge_props=[
+            ("type", "enum", "Deployment relationship type from the edge vocabulary."),
+            ("label", "string", "Edge label."),
+            ("protocol", "HTTPS | HTTP | TCP | UDP | gRPC | AMQP | Kafka", "Network protocol."),
+            ("port", "number", "Network port."),
+            ("encrypted", "boolean", "Encrypted traffic marker."),
+            ("internal", "boolean", "Internal traffic marker."),
+            ("direction", "enum", "Traffic direction."),
+            ("links", "list/object", "External links attached to the relationship."),
+        ],
+        grammar_notes=[
+            "Nest physical scope with `children:`: cloud/region/network/cluster/namespace/workload/pod containers hold their resources.",
+            "Use placement edges (`hosts`, `runs`, `deploys-to`, `contains`, `scheduled-on`) for where things run.",
+            "Use traffic edges (`routes-to`, `calls`, `connects-to`, `exposes`, `forwards-to`) and data edges (`reads-from`, `writes-to`, `publishes-to`, `subscribes-to`) for runtime interaction.",
+            "Mark Kubernetes clusters with `platform: kubernetes`; mark cloud provider with `provider:`.",
+        ],
+        validation_notes=[
+            "Every edge endpoint must reference a declared node, and each node must declare a bracket node type.",
+            "Unknown node or edge types fall back to generic rendering and are flagged as warnings.",
+            "Kubernetes workloads (deployment, statefulset, daemonset, job, cronjob, pod) must be nested inside a namespace.",
+            "Namespace-scoped resources (secret, config-map, persistent-volume-claim) must be nested inside a namespace.",
+            "Kubernetes resources should sit inside a cluster whose `platform` is kubernetes.",
+            "Workloads should declare `image` or `version`; databases should declare `encrypted: true`.",
+            "Provider-specific properties should only appear on nodes of the matching provider.",
+        ],
+        layout_notes=[
+            "Clouds, regions, networks, clusters, and namespaces render as nested containers/swimlanes.",
+            "Placement edges are styled differently from traffic edges; public unencrypted traffic is highlighted.",
+        ],
+        examples=[
+            "01-kubernetes-platform.codi",
+            "02-cloud-neutral-provider.codi",
+            "03-node-types-and-relationships.codi",
         ],
     ),
 ]
@@ -856,6 +990,26 @@ def build_cli_skill(skills_dir: Path) -> None:
 
         Older versions of this package installed a single `codi` skill. This package now splits CoDi into `codi-cli` plus diagram-specific skills such as `codi-class`, `codi-sequence`, and `codi-threat-model`.
 
+        ## Availability First
+
+        Before running any CoDi command, confirm the `codi` CLI is reachable in the current shell:
+
+        ```bash
+        command -v codi
+        # or
+        type codi
+        # or run the bundled check
+        scripts/codi-doctor.sh
+        ```
+
+        `command -v codi` succeeds when `codi` is a binary on `PATH`, a shell alias, or a shell function. Note that aliases or functions defined only in an interactive profile may not be loaded in a non-interactive shell.
+
+        If `codi` is not found, treat the CLI as unavailable and stop:
+
+        - Do not invent results. Never hand-write, fake, or generate by other means an SVG, PNG, validation report, diff, or expanded output to stand in for the CLI. There is no fallback renderer or validator.
+        - Refuse the validate/render/scan/diff/expand action and tell the user you cannot locate `codi`. It must be installed and available on `PATH`, or exposed as a shell alias or function, before any of these commands can run.
+        - You may still author or edit `.codi` source from the references, but state clearly that it was not validated or rendered because the CLI is unavailable.
+
         ## Required Pairing
 
         Install this skill with any diagram-specific CoDi skill. Diagram skills assume this shared CLI skill is available.
@@ -900,7 +1054,13 @@ def build_cli_skill(skills_dir: Path) -> None:
             "Use $codi-cli to validate and render a .codi diagram.",
         ),
     )
-    for filename in ["cli.md", "grammar.md", "validation.md", "rendering-and-scaling.md"]:
+    for filename in [
+        "cli.md",
+        "grammar.md",
+        "validation.md",
+        "rendering-and-scaling.md",
+        "diagram-types.md",
+    ]:
         copy_file(ROOT / "references" / filename, skill / "references" / filename)
     copy_file(ROOT / "scripts" / "codi-doctor.sh", skill / "scripts" / "codi-doctor.sh")
     copy_file(
@@ -912,8 +1072,7 @@ def build_cli_skill(skills_dir: Path) -> None:
 def build_diagram_skill(skills_dir: Path, diagram: DiagramSkill) -> None:
     skill = skills_dir / diagram.name
     example_lines = "\n".join(
-        f"- `references/examples/{index:02d}-{example}`"
-        for index, example in enumerate(diagram.examples, start=1)
+        f"- `references/examples/{example}`" for example in diagram.examples
     )
     write(
         skill / "SKILL.md",
@@ -1141,8 +1300,11 @@ def build_diagram_skill(skills_dir: Path, diagram: DiagramSkill) -> None:
         - Use explicit source `direction` when layout direction matters more than target aspect ratio.
         """,
     )
-    for index, example in enumerate(diagram.examples, start=1):
-        copy_file(EXAMPLES / example, skill / "references" / "examples" / f"{index:02d}-{example}")
+    for example in diagram.examples:
+        copy_file(
+            EXAMPLES / diagram.diagram_type / example,
+            skill / "references" / "examples" / example,
+        )
 
 
 def build() -> None:

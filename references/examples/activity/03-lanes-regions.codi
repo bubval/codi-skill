@@ -1,0 +1,28 @@
+# Activity with swimlanes and an interruptible region.
+
+SupportEscalation[activity]:
+  - CustomerLane[swimlane]:
+      children:
+        - OpenTicket[action]
+        - AddEvidence[action]
+  - SupportLane[swimlane]:
+      children:
+        - Triage[action]
+        - EscalationRegion[interruptible-region]:
+            children:
+              - Investigate[action]
+              - RequestLogs[action]
+              - Timeout[flow-final-node]
+        - Resolve[action]
+  - start[initial-node]
+  - done[activity-final-node]
+  - start --> OpenTicket
+  - OpenTicket --> AddEvidence
+  - AddEvidence --> Triage
+  - Triage --> EscalationRegion
+  - EscalationRegion --> Investigate
+  - Investigate --> RequestLogs: "[needs logs]"
+  - RequestLogs --> Investigate: "[logs received]"
+  - Investigate --> Timeout: "[customer unavailable]"
+  - Investigate --> Resolve: "[root cause found]"
+  - Resolve --> done

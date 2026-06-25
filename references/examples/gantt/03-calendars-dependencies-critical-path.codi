@@ -1,0 +1,31 @@
+# Gantt chart with calendar metadata, dependency variants, lag, baseline, deadline, and critical path.
+
+MigrationSchedule[gantt]:
+  - calendar:
+      work_week: [mon, tue, wed, thu, fri]
+      holidays:
+        - 2026-09-07
+  - PlanCutover[task]:
+      start: 2026-09-01
+      end: 2026-09-04
+      baseline_start: 2026-09-01
+      baseline_end: 2026-09-03
+  - MigrateData[task]:
+      start: 2026-09-08
+      end: 2026-09-14
+      deadline: 2026-09-15
+  - ValidateReports[task]:
+      start: 2026-09-15
+      end: 2026-09-17
+  - FreezeComplete[milestone]:
+      date: 2026-09-18
+  - PlanCutover --> MigrateData:
+      type: finish-start
+      lag: 1d
+      critical: true
+  - MigrateData --> ValidateReports:
+      type: finish-start
+      critical: true
+  - ValidateReports --> FreezeComplete:
+      type: finish-finish
+      critical: true

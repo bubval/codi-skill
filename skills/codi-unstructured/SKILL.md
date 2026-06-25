@@ -36,6 +36,6 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-unstructured-service-map.codi`
-- `references/examples/02-unstructured-incident-map.codi`
-- `references/examples/03-unstructured-dependency-web.codi`
+- `references/examples/01-freeform-groups.codi`
+- `references/examples/02-styling-and-edge-styles.codi`
+- `references/examples/03-layout-affinity.codi`

@@ -36,6 +36,6 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-state-machine-order.codi`
-- `references/examples/02-state-machine-composite.codi`
-- `references/examples/03-state-machine-regions.codi`
+- `references/examples/01-basic-lifecycle.codi`
+- `references/examples/02-pseudostates-composite.codi`
+- `references/examples/03-regions-internal-transitions.codi`

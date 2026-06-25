@@ -1,0 +1,18 @@
+# Sequence diagram with boundary participant, found/lost events, and parallel work.
+
+WebhookProcessing[sequence]:
+  - Partner[actor]
+  - Edge[server]
+  - WebhookApi[service]
+  - Queue[database]
+  - Worker[service]
+  - found --> Edge: "Partner callback arrives"
+  - sync Partner -> Edge: "POST /webhook"
+  - sync Edge -> WebhookApi: "Forward signed request"
+  - par "persist and process":
+      - async WebhookApi -> Queue: "Enqueue event"
+      - async WebhookApi -> Worker: "Notify worker"
+  - sync Worker -> Queue: "Read event"
+  - lost Worker -->: "Drop duplicate event"
+  - reply Partner <-- Edge: "202 Accepted"
+

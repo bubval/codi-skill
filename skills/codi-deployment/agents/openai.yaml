@@ -1,0 +1,4 @@
+interface:
+  display_name: "CoDi Deployment"
+  short_description: "Author CoDi deployment diagrams"
+  default_prompt: "Use $codi-deployment to create a valid CoDi deployment diagram."

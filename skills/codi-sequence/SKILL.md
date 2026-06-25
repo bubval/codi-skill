@@ -36,6 +36,6 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-sequence-auth-login.codi`
-- `references/examples/02-sequence-lifecycle-fragments.codi`
-- `references/examples/03-sequence-notes-replies.codi`
+- `references/examples/01-basic-messages-lifecycle.codi`
+- `references/examples/02-fragments-notes-refs.codi`
+- `references/examples/03-parallel-and-boundary.codi`

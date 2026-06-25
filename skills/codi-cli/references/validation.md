@@ -75,6 +75,7 @@ Default validators are embedded in the native CLI:
 | `c4-component` | `c4_component.py` |
 | `c4-code` | `c4_code.py` |
 | `class` | `class_diagram_new.py` |
+| `deployment` | `deployment.py` |
 | `flowchart` | `flowchart.py` |
 | `gantt` | `gantt.py` |
 | `sequence` | `sequence.py` |

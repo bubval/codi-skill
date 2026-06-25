@@ -2,8 +2,9 @@
 set -euo pipefail
 
 if ! command -v codi >/dev/null 2>&1; then
-  echo "codi CLI not found on PATH"
-  echo "Install the CoDi CLI, then rerun validation or rendering."
+  echo "codi CLI not found (not on PATH and not a shell alias/function)"
+  echo "Do not fabricate SVG/PNG/validation output without it."
+  echo "Make codi available on PATH or as an alias/function, then rerun validation or rendering."
   exit 127
 fi
 

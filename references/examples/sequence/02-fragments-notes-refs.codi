@@ -1,0 +1,23 @@
+# Sequence fragments: alt, else, opt, loop, ref, and notes.
+
+LoginFragments[sequence]:
+  - Browser[actor]
+  - WebApp[service]
+  - AuthService[service]
+  - AuditLog[database]
+  - note over WebApp: "All requests carry a correlation id"
+  - sync Browser -> WebApp: "POST /login"
+  - sync WebApp -> AuthService: "Validate credentials"
+  - alt "valid credentials":
+      - reply WebApp <-- AuthService: "session token"
+      - opt "remember device":
+          - sync WebApp -> AuthService: "Register trusted device"
+      - loop "write audit events":
+          - async WebApp -> AuditLog: "LoginSucceeded"
+      - ref "SharedMfaCheck":
+          - sync WebApp -> AuthService: "Check risk score"
+  - else "invalid credentials":
+      - reply WebApp <-- AuthService: "authentication failed"
+      - async WebApp -> AuditLog: "LoginFailed"
+  - reply Browser <-- WebApp: "HTTP response"
+

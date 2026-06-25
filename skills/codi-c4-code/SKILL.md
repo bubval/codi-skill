@@ -35,6 +35,5 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-c4-code-payment-module.codi`
-- `references/examples/02-c4-code-event-handler.codi`
-- `references/examples/03-c4-code-repository-layer.codi`
+- `references/examples/01-modules-functions-tables.codi`
+- `references/examples/02-members-and-boundaries.codi`

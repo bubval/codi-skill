@@ -1,0 +1,36 @@
+# Class relationships: association, aggregation, composition, dependency, and multiplicity.
+
+OrderDomain[class]:
+  - Order[class]:
+      - "+ id: UUID"
+      - "+ totalCents: Int"
+      - "+ lines: OrderLine[]"
+      - "+ payment: Payment"
+  - OrderLine[class]:
+      - "+ sku: String"
+      - "+ quantity: Int"
+  - Customer[class]:
+      - "+ id: UUID"
+      - "+ email: String"
+      - "+ orders: Order[]"
+  - Payment[class]:
+      - "+ status: String"
+      - "+ receipt: Receipt"
+  - Receipt[class]:
+      - "+ issuedAt: String"
+  - Order --> OrderLine:
+      type: composition
+      label: "contains"
+      source_multiplicity: "1"
+      target_multiplicity: "1..*"
+  - Customer --> Order:
+      type: association
+      label: "places"
+      source_multiplicity: "1"
+      target_multiplicity: "0..*"
+  - Order --> Payment:
+      type: aggregation
+      label: "paid by"
+  - Payment --> Receipt:
+      type: dependency
+      label: "creates"

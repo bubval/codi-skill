@@ -1,6 +1,8 @@
 # CoDi CLI Reference
 
-Use the `codi` CLI when it is available on `PATH`. If it is not available, author or edit `.codi` source from the references and report that validation/rendering could not be run.
+Use the `codi` CLI when it is available. Before any command, confirm it is reachable with `command -v codi` (this also matches a shell alias or function, not just a binary on `PATH`).
+
+If `codi` is not found, the CLI is unavailable. Do not fabricate output: never hand-write or otherwise fake an SVG, PNG, validation report, diff, or expanded result in place of the CLI — there is no fallback renderer or validator. Refuse the action and tell the user that `codi` could not be located and must be on `PATH` or exposed as an alias/function. You may still author or edit `.codi` source from the references, but state plainly that it was not validated or rendered.
 
 ## Help
 
@@ -53,28 +55,40 @@ Render validates before producing output. SVG is the preferred documentation art
 
 ## Scan
 
-Scan source code and generate `.codi`:
+Scan a source directory or GitHub repository and generate a `class` diagram with
+inferred relationships:
 
 ```bash
 codi scan ./src
-codi scan ./src --name MyProject -o deps.codi
-codi scan ./src --mode class --name MyProject -o classes.codi
+codi scan ./src --name MyProject -o classes.codi
 codi scan https://github.com/org/repo --source-kind github -o repo.codi
-codi scan ./src --mode class -o classes.codi --render-svg classes.svg
-codi scan ./src --mode class --render-png classes.png --ratio 16:9 --width 1600
+codi scan ./src -o classes.codi --render-svg classes.svg
+codi scan ./src --render-png classes.png --ratio 16:9 --width 1600
 ```
 
-Modes:
+`codi scan` always produces a class diagram. Output goes to stdout unless `-o` is
+given. The generated diagram is named `Dependencies` by default; override with
+`--name`.
 
-- `dependency`: module dependency diagrams
-- `class`: class diagrams with inferred relationships
+Source selection:
 
-Useful class scan options:
+- `--source-kind auto|local|github` (default `auto`)
 
-- `--relationship-inference strict|conservative|rich`
-- `--include-generated`
-- `--max-relationships-per-class <n>`
-- `--max-total-relationships <n>`
+Relationship and member detail:
+
+- `--relationship-inference strict|conservative|rich` (default `conservative`)
+- `--external-type-resolution off|imports|installed` (default `installed`)
+- `--include-generated` include generated source and declaration files
+- `--include-member-metadata` include source-language member metadata
+- `--include-relationship-evidence` include source relationship evidence
+- `--max-members-per-class <n>` (default `1024`)
+- `--max-relationships-per-class <n>` (default `512`)
+- `--max-total-relationships <n>` (default `10000`)
+
+Rendering the scan output (used with `--render-svg`/`--render-png`):
+
+- `--theme <name|path>`, `--size WIDTHxHEIGHT`, `--ratio`, `--width`, `--height`
+- `--raster-scale <n>`, `--max-raster-dimension <n>`
 
 ## Expand
 
@@ -102,6 +116,41 @@ codi diff old.codi new.codi --type-path ./custom_type.py
 ```
 
 `codi diff` exits `1` when changes are found and `0` when no changes are found.
+
+## Version
+
+Each `.codi` file has its own local version history (independent of git). Save,
+inspect, diff, and restore versions:
+
+```bash
+codi version save diagram.codi -m "initial layout"
+codi version save diagram.codi --branch experiment
+codi version list diagram.codi
+codi version list diagram.codi --all --format json
+codi version show diagram.codi --version HEAD
+codi version status diagram.codi
+codi version diff diagram.codi --from v1 --to HEAD
+codi version diff diagram.codi --from v1 --to HEAD --render diff.svg --theme dark
+codi version restore diagram.codi --version v1 --yes
+codi version checkout diagram.codi --version <hash> --yes
+```
+
+A version can be referenced by id, label, hash prefix, or `HEAD`.
+
+## Branch
+
+Manage per-file version branches:
+
+```bash
+codi branch list diagram.codi
+codi branch current diagram.codi
+codi branch create diagram.codi experiment --from HEAD
+codi branch switch diagram.codi experiment
+codi branch switch diagram.codi main --restore --yes
+```
+
+`--restore` writes the branch head back into the working file; `--yes` skips the
+overwrite confirmation.
 
 ## Test
 

@@ -1,0 +1,29 @@
+# Gantt chart with groups, milestones, resources, owners, and status metadata.
+
+ProductLaunch[gantt]:
+  - Product[group]:
+      children:
+        - DefineScope[task]:
+            start: 2026-08-03
+            end: 2026-08-07
+            resource: "Product"
+            status: done
+        - Signoff[milestone]:
+            date: 2026-08-08
+  - Engineering[group]:
+      children:
+        - ImplementApi[task]:
+            start: 2026-08-10
+            end: 2026-08-21
+            resource: "Backend team"
+            status: in-progress
+        - BuildUi[task]:
+            start: 2026-08-12
+            end: 2026-08-24
+            resource: "Frontend team"
+  - GoLive[milestone]:
+      date: 2026-08-31
+  - DefineScope --> ImplementApi
+  - DefineScope --> BuildUi
+  - ImplementApi --> GoLive
+  - BuildUi --> GoLive

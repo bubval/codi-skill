@@ -1,0 +1,45 @@
+# Deployment diagram with provider tags, edge, gateway, serverless, bucket, queue, and topic.
+
+CloudIntegration[deployment]:
+  - Internet[external-system]:
+      public: true
+  - GlobalCloud[cloud]:
+      provider: aws
+      environment: prod
+      PrimaryRegion[region]:
+        provider: aws
+        EdgeCdn[cdn]:
+          provider: azure
+          public: true
+        ApiGateway[api-gateway]:
+          provider: aws
+          public: true
+        EventFunction[function]:
+          provider: gcp
+        UploadBucket[bucket]:
+          provider: aws
+          encrypted: true
+          managed: true
+        EventQueue[queue]:
+          encrypted: true
+        AuditTopic[topic]:
+          encrypted: true
+  - Internet --> EdgeCdn:
+      type: routes-to
+      protocol: HTTPS
+      encrypted: true
+  - EdgeCdn --> ApiGateway:
+      type: routes-to
+      protocol: HTTPS
+  - ApiGateway --> EventFunction:
+      type: calls
+      protocol: HTTPS
+  - EventFunction --> UploadBucket:
+      type: writes-to
+      encrypted: true
+  - EventFunction --> EventQueue:
+      type: publishes-to
+      encrypted: true
+  - EventFunction --> AuditTopic:
+      type: publishes-to
+      encrypted: true

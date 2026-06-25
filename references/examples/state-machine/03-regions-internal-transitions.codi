@@ -1,0 +1,26 @@
+# State machine with orthogonal regions, internal transitions, deferred events, and scoped names.
+
+FulfillmentRegions[state-machine]:
+  - initial --> Active
+  - Active[composite-state]:
+      regions:
+        Payment:
+          - Idle[state]
+          - Capturing[state]:
+              internal-transitions:
+                - trigger: "gatewayCallback"
+                  action: "recordGatewayState"
+              deferred:
+                - "refundRequested"
+          - Idle --> Capturing:
+              trigger: "capture"
+        Shipping:
+          - Waiting[state]
+          - Packing[state]
+          - Shipped[state]
+          - Waiting --> Packing:
+              trigger: "stockReserved"
+          - Packing --> Shipped:
+              trigger: "carrierPickup"
+  - Active --> final:
+      trigger: "Payment.Capturing complete and Shipping.Shipped entered"

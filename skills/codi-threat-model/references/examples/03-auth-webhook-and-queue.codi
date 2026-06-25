@@ -1,0 +1,36 @@
+# Threat model combining auth, webhook callback, message queue, and third-party boundary.
+
+WebhookThreats[threat-model]:
+  - Internet[trust-boundary]:
+      children:
+        - PartnerWebhook[external-entity]: "Third-party webhook sender"
+        - UserBrowser[external-entity]: "Signed-in customer browser"
+  - EdgeTier[trust-boundary]:
+      children:
+        - Waf[process]: "Filters public traffic"
+        - AuthProxy[process]: "Validates OIDC session"
+  - AppTier[trust-boundary]:
+      children:
+        - WebhookApi[process]:
+            controls: ["signature verification", "idempotency key"]
+        - EventQueue[data-store]:
+            encrypted: true
+  - UserBrowser --> AuthProxy:
+      label: "OIDC login callback"
+      encrypted: true
+      authenticated: true
+  - PartnerWebhook --> Waf:
+      label: "HTTPS signed webhook"
+      encrypted: true
+      authenticated: false
+  - Waf --> WebhookApi:
+      label: "Forwards verified request"
+      encrypted: true
+  - AuthProxy --> WebhookApi:
+      label: "Injects identity headers"
+      encrypted: true
+      authenticated: true
+  - WebhookApi --> EventQueue:
+      label: "Publishes normalized event"
+      encrypted: true
+

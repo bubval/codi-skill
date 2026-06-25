@@ -36,6 +36,6 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-class-domain-model.codi`
-- `references/examples/02-class-association-details.codi`
-- `references/examples/03-class-interface-contracts.codi`
+- `references/examples/01-members-interfaces-enums.codi`
+- `references/examples/02-relationships-multiplicity.codi`
+- `references/examples/03-stereotypes-templates-association.codi`

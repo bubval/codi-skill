@@ -11,6 +11,26 @@ CoDi source is YAML with one top-level `DiagramName[diagram-type]` key and a lis
 
 Older versions of this package installed a single `codi` skill. This package now splits CoDi into `codi-cli` plus diagram-specific skills such as `codi-class`, `codi-sequence`, and `codi-threat-model`.
 
+## Availability First
+
+Before running any CoDi command, confirm the `codi` CLI is reachable in the current shell:
+
+```bash
+command -v codi
+# or
+type codi
+# or run the bundled check
+scripts/codi-doctor.sh
+```
+
+`command -v codi` succeeds when `codi` is a binary on `PATH`, a shell alias, or a shell function. Note that aliases or functions defined only in an interactive profile may not be loaded in a non-interactive shell.
+
+If `codi` is not found, treat the CLI as unavailable and stop:
+
+- Do not invent results. Never hand-write, fake, or generate by other means an SVG, PNG, validation report, diff, or expanded output to stand in for the CLI. There is no fallback renderer or validator.
+- Refuse the validate/render/scan/diff/expand action and tell the user you cannot locate `codi`. It must be installed and available on `PATH`, or exposed as a shell alias or function, before any of these commands can run.
+- You may still author or edit `.codi` source from the references, but state clearly that it was not validated or rendered because the CLI is unavailable.
+
 ## Required Pairing
 
 Install this skill with any diagram-specific CoDi skill. Diagram skills assume this shared CLI skill is available.

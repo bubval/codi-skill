@@ -35,6 +35,5 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-c4-container-saas-analytics.codi`
-- `references/examples/02-c4-container-retail-checkout.codi`
-- `references/examples/03-c4-container-open-banking.codi`
+- `references/examples/01-system-containers.codi`
+- `references/examples/02-boundary-and-technology.codi`

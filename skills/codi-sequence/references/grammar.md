@@ -19,7 +19,7 @@ All CoDi diagrams are YAML. A file contains exactly one top-level mapping key wi
 - Sequence directives include `sync`, `call`, `async`, `reply`, `create`, `destroy`, `found`, `lost`, and `self`.
 - Lifecycle directives include `activate X`, `deactivate X`, and `destroy X`.
 - Notes use `note over X`, `note left of X`, or `note right of X`.
-- Fragments use `alt`, `else`, `opt`, `loop`, `par`, and `ref` list items.
+- Fragments use `alt`, `else`, `opt`, `loop`, `par`, `break`, `critical`, `neg`, `assert`, `strict`, `seq`, `ignore`, `consider`, and `ref` list items.
 
 ## Nesting
 

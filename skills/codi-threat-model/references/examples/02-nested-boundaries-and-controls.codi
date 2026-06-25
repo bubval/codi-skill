@@ -1,0 +1,37 @@
+# Threat model with nested boundaries, controls, privilege metadata, and audit flow.
+
+AdminConsoleThreats[threat-model]:
+  - CorporateNetwork[trust-boundary]:
+      children:
+        - AdminBrowser[external-entity]: "Administrator browser"
+        - AdminConsole[process]:
+            controls: ["MFA", "session timeout", "device posture"]
+  - ProductionNetwork[trust-boundary]:
+      children:
+        - AdminApi[process]:
+            privilege-level: elevated
+            controls: ["RBAC", "break-glass approval"]
+        - AuditLog[data-store]:
+            encrypted: true
+            controls: ["append-only", "retention lock"]
+  - SecretsBoundary[trust-boundary]:
+      children:
+        - SecretsVault[data-store]:
+            encrypted: true
+            controls: ["envelope encryption", "rotation"]
+  - AdminBrowser --> AdminConsole:
+      label: "HTTPS admin session"
+      encrypted: true
+      authenticated: true
+  - AdminConsole --> AdminApi:
+      label: "Privileged API command"
+      encrypted: true
+      authenticated: true
+  - AdminApi --> SecretsVault:
+      label: "Reads scoped secret"
+      encrypted: true
+      authenticated: true
+  - AdminApi --> AuditLog:
+      label: "Writes admin audit event"
+      encrypted: true
+

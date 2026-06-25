@@ -1,0 +1,26 @@
+# Activity object flow with parameters, pins, object nodes, and signal action.
+
+FulfillmentObjectFlow[activity]:
+  - start[initial-node]
+  - CustomerRequest[activity-parameter-node]: "Order request"
+  - ValidateOrder[call-operation-action]:
+      operation: "OrderService.validate"
+      children:
+        - RequestIn[input-pin]
+        - ValidatedOut[output-pin]
+  - ValidatedOrder[object-node]: "Order [validated]"
+  - SendWarehouseSignal[send-signal-action]:
+      signal: "ReserveStock"
+  - Complete[activity-final-node]
+  - CustomerRequest --> RequestIn:
+      type: object-flow
+  - start --> ValidateOrder:
+      type: control-flow
+  - ValidatedOut --> ValidatedOrder:
+      type: object-flow
+  - ValidateOrder --> SendWarehouseSignal:
+      type: control-flow
+  - ValidatedOrder --> SendWarehouseSignal:
+      type: object-flow
+  - SendWarehouseSignal --> Complete:
+      type: control-flow

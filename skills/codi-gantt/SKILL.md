@@ -34,6 +34,6 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-gantt-product-launch.codi`
-- `references/examples/02-gantt-resource-plan.codi`
-- `references/examples/03-gantt-critical-path.codi`
+- `references/examples/01-basic-tasks.codi`
+- `references/examples/02-groups-milestones-resources.codi`
+- `references/examples/03-calendars-dependencies-critical-path.codi`

@@ -36,6 +36,5 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-flowchart-release-gate.codi`
-- `references/examples/02-flowchart-error-handling.codi`
-- `references/examples/03-flowchart-nested-process.codi`
+- `references/examples/01-process-flow.codi`
+- `references/examples/02-nested-groups-and-styling.codi`

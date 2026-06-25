@@ -1,0 +1,33 @@
+# C4 code diagram with code boundary, classes, methods, and dependencies.
+
+PaymentModuleCode[c4-code]:
+  - PaymentComponent[component]:
+      scope: true
+      technology: "TypeScript service"
+      description: "Authorizes and captures payments"
+  - PaymentBoundary[component-boundary]:
+      label: "payment"
+      children:
+        - PaymentService[class]:
+          - "+ authorize(request: PaymentRequest): PaymentResult"
+          - "+ capture(id: PaymentId): CaptureResult"
+          - "- buildGatewayPayload(): GatewayPayload"
+        - GatewayClient[class]:
+          - "+ postAuthorization(payload: GatewayPayload): GatewayResponse"
+        - PaymentRequest[record]:
+          - "+ amount: Money"
+          - "+ cardToken: String"
+        - PaymentStatus[enum]:
+          - AUTHORIZED
+          - CAPTURED
+          - DECLINED
+  - PaymentService --> GatewayClient:
+      type: dependency
+      label: "Calls gateway"
+  - PaymentService --> PaymentRequest:
+      type: dependency
+      label: "Consumes request"
+  - PaymentService --> PaymentStatus:
+      type: dependency
+      label: "Returns status"
+

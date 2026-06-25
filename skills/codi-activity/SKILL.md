@@ -36,6 +36,6 @@ This skill assumes the `codi-cli` skill is installed. Use `codi-cli` for shared 
 - Validation rules and common repairs: `references/validation.md`
 - Layout and rendering behavior: `references/layout-rendering.md`
 - Examples:
-- `references/examples/01-activity-approval-workflow.codi`
-- `references/examples/02-activity-object-flow.codi`
-- `references/examples/03-activity-swimlane-handoff.codi`
+- `references/examples/01-control-flow.codi`
+- `references/examples/02-actions-pins-object-flow.codi`
+- `references/examples/03-lanes-regions.codi`
