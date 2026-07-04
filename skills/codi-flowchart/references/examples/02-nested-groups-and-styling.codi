@@ -1,31 +1,33 @@
 # Flowchart with nested groups, styling, layout hints, and dashed edges.
 
 IncidentResponse[flowchart]:
-  - direction: TB
+  - layout:
+      direction: TB
   - Intake[group]:
-      direction: LR
-      fill: "#eff6ff"
-      children:
-        - Alert[process]:
-            label: "Alert received"
-        - Triage[decision]:
-            label: "Customer impact?"
-        - Alert --> Triage: "classify"
+      - layout:
+          direction: LR
+      - style:
+          fill: "#eff6ff"
+      - Alert[process]:
+          label: "Alert received"
+      - Triage[decision]:
+          label: "Customer impact?"
+      - Alert --> Triage: "classify"
   - Response[group]:
-      fill: "#fef3c7"
-      children:
-        - PageOnCall[process]
-        - Mitigate[process]
-        - Communicate[process]
-        - PageOnCall --> Mitigate: "investigate"
-        - Mitigate --> Communicate:
-            label: "status update"
-            style: dashed
+      - style:
+          fill: "#fef3c7"
+      - PageOnCall[process]
+      - Mitigate[process]
+      - Communicate[process]
+      - PageOnCall --> Mitigate: "investigate"
+      - Mitigate --> Communicate:
+          label: "status update"
+          style:
+            line: dashed
   - Archive[process]:
-      layout_only: false
-      width: 180
-      height: 80
+      layout:
+        width: 180
+        height: 80
   - Triage --> PageOnCall: "yes"
   - Triage --> Archive: "no"
   - Communicate --> Archive: "resolved"
-

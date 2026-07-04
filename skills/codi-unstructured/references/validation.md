@@ -22,5 +22,6 @@ Use `codi validate <file> --strict` when producing best-practice examples or doc
 - Add missing node declarations for edge endpoints.
 - Rename duplicate nodes or intentionally nest them where the type supports scope.
 - Replace invalid node/edge types with vocabulary entries from `vocabulary.md`.
-- Replace unsupported properties with entries from `properties.md`.
+- Replace unsupported properties with entries from `properties.md`; move layout keys under `layout:` and color keys under `style:`.
+- Replace the removed `children:` keyword with plain nested list items.
 - Add relationship labels where the diagram type expects them.

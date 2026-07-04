@@ -6,18 +6,17 @@ PaymentModuleCode[c4-code]:
       technology: "TypeScript service"
       description: "Authorizes and captures payments"
   - PaymentBoundary[component-boundary]:
-      label: "payment"
-      children:
-        - PaymentService[class]:
+      - label: "payment"
+      - PaymentService[class]:
           - "+ authorize(request: PaymentRequest): PaymentResult"
           - "+ capture(id: PaymentId): CaptureResult"
           - "- buildGatewayPayload(): GatewayPayload"
-        - GatewayClient[class]:
+      - GatewayClient[class]:
           - "+ postAuthorization(payload: GatewayPayload): GatewayResponse"
-        - PaymentRequest[record]:
+      - PaymentRequest[record]:
           - "+ amount: Money"
           - "+ cardToken: String"
-        - PaymentStatus[enum]:
+      - PaymentStatus[enum]:
           - AUTHORIZED
           - CAPTURED
           - DECLINED
@@ -30,4 +29,3 @@ PaymentModuleCode[c4-code]:
   - PaymentService --> PaymentStatus:
       type: dependency
       label: "Returns status"
-

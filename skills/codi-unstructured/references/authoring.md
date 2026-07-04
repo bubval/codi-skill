@@ -18,8 +18,10 @@ Permissive freeform diagrams, concept maps, dependency webs, ownership maps, and
 ## Minimal Shape
 
 ```yaml
-Example[unstructured]:
-  - FirstNode[open vocabulary]
+ServiceMap[unstructured]:
+  - API[service]
+  - Queue[queue]
+  - API --> Queue: "publishes"
 ```
 
 ## Production Pattern
@@ -28,6 +30,7 @@ Example[unstructured]:
 - Use stable names because CoDi identity is name-based.
 - Add labels on relationships where the validator or reader benefits from intent.
 - Prefer structured properties over overloaded labels when a property exists.
+- Keep layout under `layout:` and colors under `style:`; semantic properties stay top-level.
 - Keep examples valid by running `codi validate`.
 - Use `codi help render` before assuming installed render flags.
 
@@ -35,5 +38,7 @@ Example[unstructured]:
 
 - Referencing an undeclared edge endpoint.
 - Mixing a diagram type's vocabulary with a lower-level or unrelated diagram type.
+- Using the removed `children:` keyword. Children are plain nested list items.
+- Using dropped aliases such as `color`, `border`, `tech`, or the bare `style: dashed` scalar.
 - Using a render target as source syntax. Render size belongs on the CLI, not in `.codi`.
 - Relying on stale command flags instead of `codi help <command>`.

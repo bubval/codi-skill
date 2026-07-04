@@ -1,8 +1,9 @@
-# Flowchart with process, decision, terminal nodes, labels, and direction.
+# Flowchart with process, decision, terminal nodes, labels, and layout direction.
 
 ReleaseGate[flowchart]:
-  - direction: LR
-  - rank_gap: 160
+  - layout:
+      direction: LR
+      rank_gap: 160
   - Draft[terminal]:
       label: "Draft change"
   - Review[process]:
@@ -24,4 +25,3 @@ ReleaseGate[flowchart]:
   - Approved --> Rework: "no"
   - Rework --> Review: "resubmit"
   - Deploy --> Done: "released"
-

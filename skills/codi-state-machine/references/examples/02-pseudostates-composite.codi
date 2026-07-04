@@ -3,23 +3,22 @@
 PaymentProcessing[state-machine]:
   - initial --> Processing
   - Processing[composite-state]:
-      children:
-        - initial
-        - Authorizing[state]
-        - RetryChoice[choice]
-        - PreviousAttempt[history]:
-            type: shallow
-        - Authorized[state]
-        - Failed[state]
-        - initial --> Authorizing
-        - Authorizing --> Authorized:
-            trigger: "approved"
-        - Authorizing --> RetryChoice:
-            trigger: "declined"
-        - RetryChoice --> PreviousAttempt:
-            guard: "retry count < 3"
-        - RetryChoice --> Failed:
-            guard: "retry count >= 3"
+      - initial
+      - Authorizing[state]
+      - RetryChoice[choice]
+      - PreviousAttempt[history]:
+          type: shallow
+      - Authorized[state]
+      - Failed[state]
+      - initial --> Authorizing
+      - Authorizing --> Authorized:
+          trigger: "approved"
+      - Authorizing --> RetryChoice:
+          trigger: "declined"
+      - RetryChoice --> PreviousAttempt:
+          guard: "retry count < 3"
+      - RetryChoice --> Failed:
+          guard: "retry count >= 3"
   - Processing --> Completed:
       trigger: "authorized"
   - Abort[terminate]

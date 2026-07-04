@@ -4,26 +4,26 @@ CloudIntegration[deployment]:
   - Internet[external-system]:
       public: true
   - GlobalCloud[cloud]:
-      provider: aws
-      environment: prod
-      PrimaryRegion[region]:
-        provider: aws
-        EdgeCdn[cdn]:
-          provider: azure
-          public: true
-        ApiGateway[api-gateway]:
-          provider: aws
-          public: true
-        EventFunction[function]:
-          provider: gcp
-        UploadBucket[bucket]:
-          provider: aws
-          encrypted: true
-          managed: true
-        EventQueue[queue]:
-          encrypted: true
-        AuditTopic[topic]:
-          encrypted: true
+      - provider: aws
+      - environment: prod
+      - PrimaryRegion[region]:
+          - provider: aws
+          - EdgeCdn[cdn]:
+              provider: azure
+              public: true
+          - ApiGateway[api-gateway]:
+              provider: aws
+              public: true
+          - EventFunction[function]:
+              provider: gcp
+          - UploadBucket[bucket]:
+              provider: aws
+              encrypted: true
+              managed: true
+          - EventQueue[queue]:
+              encrypted: true
+          - AuditTopic[topic]:
+              encrypted: true
   - Internet --> EdgeCdn:
       type: routes-to
       protocol: HTTPS

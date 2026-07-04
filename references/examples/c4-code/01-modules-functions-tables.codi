@@ -6,17 +6,16 @@ CheckoutPersistenceCode[c4-code]:
       technology: "Rust component"
       description: "Persists checkout state and audit records"
   - PersistencePackage[package]:
-      label: "checkout.persistence"
-      children:
-        - RepositoryModule[module]:
-            description: "Groups persistence functions"
-        - SaveCheckout[function]:
-            description: "Stores checkout snapshots"
-        - CheckoutRow[database-table]:
+      - label: "checkout.persistence"
+      - RepositoryModule[module]:
+          description: "Groups persistence functions"
+      - SaveCheckout[function]:
+          description: "Stores checkout snapshots"
+      - CheckoutRow[database-table]:
           - "checkout_id uuid primary key"
           - "status text"
           - "updated_at timestamptz"
-        - AuditRecord[record]:
+      - AuditRecord[record]:
           - "+ checkoutId: Uuid"
           - "+ status: CheckoutStatus"
           - "+ changedAt: OffsetDateTime"
@@ -29,4 +28,3 @@ CheckoutPersistenceCode[c4-code]:
   - SaveCheckout --> AuditRecord:
       type: dependency
       label: "Creates audit record"
-

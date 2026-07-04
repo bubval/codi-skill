@@ -4,10 +4,9 @@ FulfillmentObjectFlow[activity]:
   - start[initial-node]
   - CustomerRequest[activity-parameter-node]: "Order request"
   - ValidateOrder[call-operation-action]:
-      operation: "OrderService.validate"
-      children:
-        - RequestIn[input-pin]
-        - ValidatedOut[output-pin]
+      - operation: "OrderService.validate"
+      - RequestIn[input-pin]
+      - ValidatedOut[output-pin]
   - ValidatedOrder[object-node]: "Order [validated]"
   - SendWarehouseSignal[send-signal-action]:
       signal: "ReserveStock"

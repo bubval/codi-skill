@@ -1,19 +1,16 @@
-# Activity with swimlanes and an interruptible region.
+# Activity with swimlanes and an interruptible region. Lane membership is by nesting.
 
 SupportEscalation[activity]:
   - CustomerLane[swimlane]:
-      children:
-        - OpenTicket[action]
-        - AddEvidence[action]
+      - OpenTicket[action]
+      - AddEvidence[action]
   - SupportLane[swimlane]:
-      children:
-        - Triage[action]
-        - EscalationRegion[interruptible-region]:
-            children:
-              - Investigate[action]
-              - RequestLogs[action]
-              - Timeout[flow-final-node]
-        - Resolve[action]
+      - Triage[action]
+      - EscalationRegion[interruptible-region]:
+          - Investigate[action]
+          - RequestLogs[action]
+          - Timeout[flow-final-node]
+      - Resolve[action]
   - start[initial-node]
   - done[activity-final-node]
   - start --> OpenTicket

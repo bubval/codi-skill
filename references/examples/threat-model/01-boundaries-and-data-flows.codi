@@ -2,22 +2,19 @@
 
 PatientPortalThreats[threat-model]:
   - PublicInternet[trust-boundary]:
-      children:
-        - PatientBrowser[external-entity]: "Patient device"
+      - PatientBrowser[external-entity]: "Patient device"
   - ApplicationTier[trust-boundary]:
-      children:
-        - ApiGateway[process]: "Validates requests and routes traffic"
-        - PatientService[process]: "Handles profile and appointment operations"
+      - ApiGateway[process]: "Validates requests and routes traffic"
+      - PatientService[process]: "Handles profile and appointment operations"
   - DataTier[trust-boundary]:
-      children:
-        - PatientDb[data-store]:
-            encrypted: true
-            description: "Stores PII and appointment data"
+      - PatientDb[data-store]:
+          encrypted: true
+          description: "Stores PII and appointment data"
   - PatientBrowser --> ApiGateway:
       label: "HTTPS login and profile requests"
       encrypted: true
       authenticated: false
-      data-classification: pii
+      data_classification: pii
   - ApiGateway --> PatientService:
       label: "mTLS internal API calls"
       encrypted: true
@@ -26,4 +23,3 @@ PatientPortalThreats[threat-model]:
       label: "SQL over TLS"
       encrypted: true
       authenticated: true
-

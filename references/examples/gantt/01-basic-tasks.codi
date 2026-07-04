@@ -1,4 +1,4 @@
-# Basic Gantt chart with tasks, dates, progress, dependency, and milestone.
+# Basic Gantt chart with tasks, dates, progress, dependencies, and milestone.
 
 ReleasePlan[gantt]:
   - DesignApi[task]:
@@ -9,10 +9,9 @@ ReleasePlan[gantt]:
       start: 2026-07-06
       end: 2026-07-14
       progress: 40
+      depends_on:
+        - DesignApi
   - Launch[milestone]:
       date: 2026-07-21
-  - DesignApi --> BuildService:
-      type: finish-start
-  - BuildService --> Launch:
-      type: finish-start
-
+      depends_on:
+        - BuildService
