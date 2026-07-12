@@ -2,29 +2,29 @@
 
 KubernetesPalette[deployment]:
   - PlatformCluster[cluster]:
-      provider: k8s
-      platform: kubernetes
-      GeneralNodePool[node-pool]:
-        WorkerNode[node]:
-      AppNamespace[namespace]:
-        WebDeployment[deployment]:
-          image: "registry.example.com/web:2026.06"
-          WebPod[pod]:
-            WebContainer[container]:
-              image: "registry.example.com/web:2026.06"
-            ScratchVolume[volume]:
-        ImportJob[job]:
-          image: "registry.example.com/importer:2026.06"
-        NightlyCronJob[cronjob]:
-          image: "registry.example.com/nightly:2026.06"
-        AppConfig[config-map]:
-        AppSecret[secret]:
-        PersistentDisk[persistent-volume]:
-        DiskClaim[persistent-volume-claim]:
-      DataNamespace[namespace]:
-        OrdersDatabase[database]:
-          encrypted: true
-        EventQueue[queue]:
+      - provider: k8s
+      - platform: kubernetes
+      - GeneralNodePool[node-pool]:
+          - WorkerNode[node]
+      - AppNamespace[namespace]:
+          - WebDeployment[deployment]:
+              - image: "registry.example.com/web:2026.06"
+              - WebPod[pod]:
+                  - WebContainer[container]:
+                      image: "registry.example.com/web:2026.06"
+                  - ScratchVolume[volume]
+          - ImportJob[job]:
+              image: "registry.example.com/importer:2026.06"
+          - NightlyCronJob[cronjob]:
+              image: "registry.example.com/nightly:2026.06"
+          - AppConfig[config-map]
+          - AppSecret[secret]
+          - PersistentDisk[persistent-volume]
+          - DiskClaim[persistent-volume-claim]
+      - DataNamespace[namespace]:
+          - OrdersDatabase[database]:
+              encrypted: true
+          - EventQueue[queue]
   - WebPod --> DiskClaim:
       type: mounts
   - DiskClaim --> PersistentDisk:

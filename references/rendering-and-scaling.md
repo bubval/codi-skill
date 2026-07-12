@@ -38,12 +38,14 @@ custom type support before rendering unknown user-facing diagram types.
 
 ## Direction and Spacing
 
-Several types support layout properties:
+Several types support layout properties under the diagram-level `layout:`
+directive (block form only):
 
 ```yaml
-- direction: LR
-- rank_gap: 180
-- node_gap: 64
+- layout:
+    direction: LR
+    rank_gap: 180
+    node_gap: 64
 ```
 
 Accepted direction vocabulary is generally:
@@ -53,9 +55,11 @@ Accepted direction vocabulary is generally:
 - `TB`: top to bottom
 - `BT`: bottom to top
 
-Supported spacing keys depend on type. `flowchart`, `unstructured`, C4, and
-state-machine diagrams support diagram-level spacing options. Some types also
-support nested spacing on container nodes.
+Supported spacing keys depend on type. `flowchart`, `unstructured`, C4,
+activity, threat-model, deployment, and state-machine diagrams support
+diagram-level spacing options; container nodes take their own `layout:` map for
+nested spacing. `gantt` and `sequence` are time-based and have no `layout:`
+keys.
 
 ## Render Targets
 

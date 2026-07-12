@@ -2,9 +2,9 @@
 
 ## Main Rules
 
-- Tasks need start and end/finish/duration.
+- Tasks need start and end/duration.
 - Milestones need date and must have identical start/end semantics.
-- Dependencies must reference known endpoints and cannot form cycles.
+- `depends_on` entries must reference known tasks or milestones and cannot form cycles.
 - Dates and durations are validated.
 - Resources referenced by tasks should exist when modeled explicitly.
 
@@ -25,5 +25,6 @@ Use `codi validate <file> --strict` when producing best-practice examples or doc
 - Add missing node declarations for edge endpoints.
 - Rename duplicate nodes or intentionally nest them where the type supports scope.
 - Replace invalid node/edge types with vocabulary entries from `vocabulary.md`.
-- Replace unsupported properties with entries from `properties.md`.
+- Replace unsupported properties with entries from `properties.md`; move layout keys under `layout:` and color keys under `style:`.
+- Replace the removed `children:` keyword with plain nested list items.
 - Add relationship labels where the diagram type expects them.

@@ -7,7 +7,7 @@ FulfillmentRegions[state-machine]:
         Payment:
           - Idle[state]
           - Capturing[state]:
-              internal-transitions:
+              internal_transitions:
                 - trigger: "gatewayCallback"
                   action: "recordGatewayState"
               deferred:

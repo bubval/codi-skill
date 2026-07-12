@@ -6,20 +6,19 @@ AnalyticsContainers[c4-container]:
       scope: true
       description: "Ingests events and serves analytics"
   - AnalyticsBoundary[system-boundary]:
-      label: "Analytics Platform"
-      children:
-        - IngestionApi[container]:
-            technology: "Kotlin service"
-            description: "Receives event batches"
-        - StreamProcessor[container]:
-            technology: "Flink"
-            description: "Aggregates events into metrics"
-        - Warehouse[database]:
-            technology: "Snowflake"
-            description: "Stores modeled tables"
-        - DashboardApp[container]:
-            technology: "Next.js"
-            description: "Serves dashboards"
+      - label: "Analytics Platform"
+      - IngestionApi[container]:
+          technology: "Kotlin service"
+          description: "Receives event batches"
+      - StreamProcessor[container]:
+          technology: "Flink"
+          description: "Aggregates events into metrics"
+      - Warehouse[database]:
+          technology: "Snowflake"
+          description: "Stores modeled tables"
+      - DashboardApp[container]:
+          technology: "Next.js"
+          description: "Serves dashboards"
   - EventBus[external-software-system]: "Kafka cluster"
   - Analyst --> DashboardApp: "Builds dashboards"
   - EventBus --> IngestionApi:
@@ -34,4 +33,3 @@ AnalyticsContainers[c4-container]:
   - DashboardApp --> Warehouse:
       label: "Queries metrics"
       technology: "SQL"
-

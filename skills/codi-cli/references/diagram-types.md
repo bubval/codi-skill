@@ -1,6 +1,8 @@
 # Diagram Type Reference
 
-All diagram types use the same parser grammar from [grammar.md](./grammar.md).
+All diagram types use the same parser grammar from [grammar.md](./grammar.md):
+one top-level `Name[diagram-type]` key, a list body, property items for
+`layout:`/`style:`, implicit children, and top-level semantic properties.
 Each type defines a vocabulary, validation rules, layout behavior, and rendering
 conventions.
 
@@ -68,6 +70,16 @@ Fragments:
 Full fragment vocabulary: `alt`, `else`, `opt`, `loop`, `par`, `break`,
 `critical`, `neg`, `assert`, `strict`, `seq`, `ignore`, `consider`, and `ref`.
 
+Lifelines, notes, and fragments accept a `style:` map:
+
+```yaml
+- WebApp[participant]:
+    style:
+      fill: "#eff6ff"
+      stroke: "#3b82f6"
+```
+
+Sequence layout is time-based: there are no `layout:` keys for this type.
 Validation focuses on lifeline vocabulary, message endpoints, message sorts,
 fragment directives, notes, and lifecycle consistency. Layout places lifelines
 horizontally and events/messages vertically in source order.
@@ -92,39 +104,47 @@ ServiceMap[unstructured]:
 Purpose: permissive freeform diagrams, concept maps, ownership maps, dependency
 webs, and quick sketches.
 
-Node vocabulary is intentionally open. Unknown node types are accepted. Common
-rendering properties:
+Node vocabulary is intentionally open. Unknown node types are accepted, and
+unknown *semantic* properties are allowed — but layout and style properties
+must use the `layout:` and `style:` maps like every other type:
 
 ```yaml
 - API[service]:
     label: "Public API"
-    shape: rect
-    icon: server
-    width: 220
-    height: 90
-    fill: "#f5f7ff"
-    stroke: "#4f46e5"
-    text: "#111827"
-    style: dashed
+    owner: "platform"          # open semantic key — allowed top-level
+    layout:
+      width: 220
+      height: 90
+    style:
+      shape: rect
+      fill: "#f5f7ff"
+      stroke: "#4f46e5"
+      text: "#111827"
+      line: dashed
 ```
 
-Diagram and nested layout properties:
+`shape` lives under `style:` for this type — the `[type]` annotation carries
+meaning; the shape override is visual only.
+
+Diagram layout (the `algorithm` key is unique to unstructured):
 
 ```yaml
-- algorithm: organic
-- direction: LR
-- rank_gap: 160
-- node_gap: 60
+- layout:
+    algorithm: organic
+    direction: LR
+    rank_gap: 160
+    node_gap: 60
 ```
 
-Edge properties:
+Edge styling:
 
 ```yaml
 - API --> Queue:
     label: "events"
-    style: dashed
-    stroke: "#6b7280"
-    stroke_width: 2
+    style:
+      line: dashed
+      stroke: "#6b7280"
+      stroke_width: 2
 ```
 
 Validation warns about unsupported or malformed renderer-relevant options, such
@@ -161,24 +181,31 @@ domain-specific node kinds:
 - Publish[process]
 ```
 
-Layout properties:
+Diagram layout:
 
 ```yaml
-- direction: LR
-- rank_gap: 180
-- node_gap: 48
+- layout:
+    direction: LR
+    rank_gap: 180
+    node_gap: 48
 ```
 
-Nested flowchart nodes:
+Nested flowchart groups use a list body with property items:
 
 ```yaml
 - Fulfillment[group]:
-    direction: TB
-    children:
-      - ReserveInventory[process]
-      - PackOrder[process]
-      - ReserveInventory --> PackOrder: "reserved"
+    - layout:
+        direction: TB
+    - style:
+        fill: "#eff6ff"
+    - ReserveInventory[process]
+    - PackOrder[process]
+    - ReserveInventory --> PackOrder: "reserved"
 ```
+
+Container-layout keys (`direction`, `rank_gap`, `node_gap`) are only meaningful
+on the diagram and on containers; on a leaf node they warn. `width`/`height`
+under `layout:` are valid on any node.
 
 Validation checks direction values, duplicate node names, duplicate edges,
 numeric layout props, and layout-only nodes. Layout is directed and
@@ -211,13 +238,13 @@ Canonical node families:
 - control nodes: initial, final, flow-final, decision, merge, fork, join
 - containers: activity partitions/swimlanes, interruptible regions, expansion regions
 
-Common grammar:
+Common grammar. Lane membership is expressed by nesting only — there is no
+`lane:` property:
 
 ```yaml
 - Intake[swimlane]:
-    children:
-      - ReceiveForm[action]
-      - ValidateForm[action]
+    - ReceiveForm[action]
+    - ValidateForm[action]
 - Start[initial]
 - Done[activity-final]
 - Form[object]
@@ -229,7 +256,17 @@ Common grammar:
 
 Implicit endpoint names such as `initial`, `final`, and common aliases are
 recognized by the validator. Activity flows can use `type: control-flow` or
-`type: object-flow`.
+`type: object-flow`. Edge `guard` and `weight` are top-level semantic keys.
+
+Diagram spacing goes under `layout:` and includes the activity-specific
+`lane_gap` and `edge_gap` keys:
+
+```yaml
+- layout:
+    rank_gap: 120
+    node_gap: 44
+    lane_gap: 32
+```
 
 Validation checks node vocabulary, endpoint references, invalid object/control
 flow combinations, partition membership, pins, regions, and common UML activity
@@ -273,21 +310,22 @@ Transition properties:
     action: "recordPayment"
 ```
 
-State behavior:
+State behavior (snake_case keys):
 
 ```yaml
 - Paid[state]:
-    entry-action: "sendReceipt"
-    do-activity: "waitForFulfillment"
-    exit-action: "closeInvoice"
-    internal-transitions:
+    entry_action: "sendReceipt"
+    do_activity: "waitForFulfillment"
+    exit_action: "closeInvoice"
+    internal_transitions:
       - event: "refundRequested"
         action: "openRefundCase"
     deferred:
       - "shipmentUpdated"
 ```
 
-Composite states and regions:
+Composite states nest children implicitly; orthogonal regions keep the explicit
+`regions:` key:
 
 ```yaml
 - Processing[composite-state]:
@@ -298,6 +336,22 @@ Composite states and regions:
       Fulfillment:
         - Picking[state]
         - Shipped[state]
+```
+
+A composite state that needs layout or style alongside children uses the list
+body:
+
+```yaml
+- Active[composite-state]:
+    - layout:
+        direction: LR
+    - style:
+        fill: "#f0fdf4"
+    - entry_action: "attach media surface"
+    - Playing[state]
+    - Paused[state]
+    - Playing --> Paused:
+        trigger: pause
 ```
 
 Validation checks state vocabulary, transition endpoints, transition properties,
@@ -341,12 +395,23 @@ Members:
       - "+total(): Money"
 ```
 
-or:
+or the string-list shorthand:
 
 ```yaml
 - Order[class]:
     - "-id: OrderId"
     - "+total(): Money"
+```
+
+Packages are containers; their children are plain list items:
+
+```yaml
+- Domain[package]:
+    - style:
+        fill: "#f8fafc"
+    - Order[class]:
+        - "+ id: UUID"
+    - OrderLine[class]
 ```
 
 Common relationship types:
@@ -361,20 +426,22 @@ Common relationship types:
 - `composition`
 - `aggregation`
 
-Association details:
+Association details (snake_case keys):
 
 ```yaml
 - Customer --> Order:
     type: association
-    sourceRole: "buyer"
-    targetRole: "orders"
-    sourceMultiplicity: "1"
-    targetMultiplicity: "0..*"
-    navigable: true
+    source_role: "buyer"
+    target_role: "orders"
+    source_multiplicity: "1"
+    target_multiplicity: "0..*"
+    navigability: target
 ```
 
-Class-specific properties include stereotypes, templates, modifiers, association
-classes, and scanner evidence. Validation checks member syntax, identifiers,
+Stereotypes can come from the bracket annotation (`Repository[interface,
+repository]`) or the `stereotype:` property; when both are present the property
+wins. Template parameters use `template_parameters:` with `name` (and optional
+`constraint`/`default`) entries. Validation checks member syntax, identifiers,
 relationship semantics, multiplicity, roles, inheritance/implementation misuse,
 and common generated-model smells. Layout renders class boxes with compartments.
 
@@ -422,6 +489,9 @@ or:
     scope: true
 ```
 
+Mark external systems with the `external-software-system` type or the
+`external` annotation (`[system, external]`).
+
 Relationship types:
 
 - `uses`
@@ -448,16 +518,18 @@ Declaration:
 
 ```yaml
 Checkout[c4-container]:
-  - CheckoutSystem[system-boundary, scope]:
-      children:
-        - WebApp[container]:
-            description: "Customer UI"
-            technology: "React"
-        - API[container]:
-            description: "Backend API"
-            technology: "Rust"
+  - CheckoutSystem[software-system]:
+      scope: true
+      description: "Checkout system"
+  - CheckoutBoundary[system-boundary]:
+      - WebApp[container]:
+          description: "Customer UI"
+          technology: "React"
+      - API[container]:
+          description: "Backend API"
+          technology: "Rust"
   - WebApp --> API:
-      label: "Calls"
+      label: "Sends checkout commands"
       protocol: "HTTPS"
 ```
 
@@ -483,8 +555,9 @@ Boundary types:
 - `system-boundary`
 - `enterprise-boundary`
 
-Containers should sit inside the scoped system boundary. Container-to-container
-relationships should declare protocol, technology, tech, or transport.
+Containers should sit inside the scoped system boundary. The technology key is
+`technology` — the old `tech` alias is gone. Container-to-container
+relationships should declare `protocol`, `technology`, or `transport`.
 
 Examples:
 
@@ -499,13 +572,12 @@ Declaration:
 PaymentAPI[c4-component]:
   - API[container, scope]: "Payment API"
   - APIBoundary[container-boundary]:
-      children:
-        - PaymentController[component]:
-            description: "Handles payment requests"
-            technology: "Axum"
-        - PaymentService[component]:
-            description: "Coordinates payment workflow"
-            technology: "Rust"
+      - PaymentController[component]:
+          description: "Handles payment requests"
+          technology: "Axum"
+      - PaymentService[component]:
+          description: "Coordinates payment workflow"
+          technology: "Rust"
   - PaymentController --> PaymentService:
       label: "Delegates command"
       protocol: "in-process"
@@ -535,8 +607,8 @@ Boundary types:
 
 Components should sit inside the scoped container boundary. Supporting elements
 should usually sit outside that boundary unless they are the scoped container.
-Relationships crossing to containers or systems should declare protocol,
-technology, tech, or transport.
+Relationships crossing to containers or systems should declare `protocol`,
+`technology`, or `transport`.
 
 Examples:
 
@@ -551,13 +623,11 @@ Declaration:
 PaymentModule[c4-code]:
   - PaymentComponent[component, scope]: "Scoped component"
   - PaymentPackage[package]:
-      children:
-        - PaymentService[class]:
-            members:
-              - "+authorize(command: AuthorizePayment): Result"
-        - PaymentPort[interface]:
-            members:
-              - "+authorize(request: PaymentRequest): PaymentResult"
+      - PaymentService[class]:
+          members:
+            - "+authorize(command: AuthorizePayment): Result"
+      - PaymentPort[interface]:
+          - "+authorize(request: PaymentRequest): PaymentResult"
   - PaymentService --> PaymentPort:
       type: implements
       label: "implements"
@@ -591,10 +661,11 @@ Boundary types:
 - `component-boundary`
 - `package`
 
-Relationship types include C4 relationships plus structural class/code
-relationships such as `inherits`, `implements`, `composition`, and
-`aggregation`. Structural relationships are type-checked: for example,
-`implements` must target an interface or trait.
+Class-like nodes take members via the string-list shorthand or the explicit
+`members:` key, exactly like the `class` type. Relationship types include C4
+relationships plus structural class/code relationships such as `inherits`,
+`implements`, `composition`, and `aggregation`. Structural relationships are
+type-checked: for example, `implements` must target an interface or trait.
 
 Examples:
 
@@ -609,17 +680,16 @@ Declaration:
 UploadThreatModel[threat-model]:
   - User[external-entity]: "Uploads content"
   - Internet[trust-boundary]:
-      children:
-        - UploadAPI[process]:
-            description: "Accepts upload requests"
-            technology: "Rust"
-        - FileStore[data-store]:
-            description: "Stores uploaded files"
-            encrypted: true
+      - UploadAPI[process]:
+          description: "Accepts upload requests"
+          technology: "Rust"
+      - FileStore[data-store]:
+          description: "Stores uploaded files"
+          encrypted: true
   - User --> UploadAPI:
       label: "HTTPS upload"
       encrypted: true
-      data-classification: pii
+      data_classification: pii
 ```
 
 Purpose: STRIDE-compatible data-flow diagrams with trust boundaries and authored
@@ -636,13 +706,14 @@ Edge type:
 
 - default `data-flow`
 
-Edge properties:
+Edge properties (snake_case keys; type names stay dash-case):
 
 - `label`
 - `encrypted`
+- `authenticated`
 - `protocol`
-- `data-classification`
-- `flow-id` or `id`
+- `data_classification`
+- `flow_id`
 - `threats`
 - `bidirectional`
 
@@ -655,9 +726,11 @@ threats:
     status: mitigated
     element: UploadAPI
     mitigation: "OIDC token validation"
+    residual_risk: "Token replay within 5-minute window"
 ```
 
-Supported STRIDE categories:
+Threats can target elements by `element` or flows by `flow_id`. Supported
+STRIDE categories:
 
 - `spoofing`
 - `tampering`
@@ -668,7 +741,8 @@ Supported STRIDE categories:
 
 Validation checks threat vocabulary, severity/status, duplicate names, endpoint
 references, flow IDs, boundary crossings, sensitive classifications, encryption,
-reachability, and authored threat references.
+reachability, and authored threat references. Diagram `layout:` gaps
+(`rank_gap`, `node_gap`) are honored.
 
 Examples:
 
@@ -689,8 +763,8 @@ LaunchPlan[gantt]:
       duration: 5d
   - Launch[milestone]:
       date: 2026-07-01
-  - Design --> Launch:
-      type: finish-start
+      depends_on:
+        - Design
 ```
 
 Purpose: project plans, resource lanes, milestones, dependencies, and timelines.
@@ -704,21 +778,23 @@ Node types:
 - `resource`
 
 Common aliases are normalized by the validator, such as `phase` for group-like
-structure and dependency aliases for finish/start relationships.
+structure.
 
-Common task properties:
+Common task properties (snake_case):
 
 - `start`
-- `end` or `finish`
+- `end`
 - `duration`
 - `progress`
 - `resource` or `resources`
-- `baseline-start`
-- `baseline-end`
+- `depends_on`
+- `baseline_start`
+- `baseline_end`
 - `deadline`
 - `critical`
 
-Timeline and calendar directives:
+Timeline and calendar directives (these stay their own directives — gantt has
+no `layout:` keys; the timeline is computed from dates):
 
 ```yaml
 - timeline:
@@ -731,23 +807,30 @@ Timeline and calendar directives:
       - 2026-06-24
 ```
 
-Dependencies:
+Dependencies are declared with `depends_on` on the dependent task or milestone.
+Gantt does **not** use arrow edges. The simple form lists predecessor names;
+the typed form is a mapping with `task` and optional `type`, `lag`, `lead`:
 
 ```yaml
-- Design --> Build:
-    type: finish-start
-    lag: 2d
-- Build --> Test:
-    type: start-start
+- Build[task]:
+    start: 2026-06-17
+    duration: 10d
+    depends_on:
+      - Design
+- Test[task]:
+    duration: 4d
+    depends_on:
+      - task: Build
+        type: start-start
+        lag: 2d
 ```
 
 Dependency types:
 
-- `finish-start`
+- `finish-start` (default)
 - `start-start`
 - `finish-finish`
 - `start-finish`
-- `soft-link`
 
 Validation checks schedules, invalid date/duration values, resources,
 dependency endpoints, dependency cycles, calendar settings, markers, critical
@@ -762,19 +845,20 @@ Examples:
 
 ## Deployment
 
-Declaration:
+Declaration. Containers nest children as list items; a container that also
+carries properties writes them as property items:
 
 ```yaml
 KubernetesPalette[deployment]:
   - PlatformCluster[cluster]:
-      provider: k8s
-      platform: kubernetes
-      AppNamespace[namespace]:
-        WebDeployment[deployment]:
-          image: "registry.example.com/web:2026.06"
-          WebPod[pod]:
-            WebContainer[container]:
-        AppSecret[secret]:
+      - provider: k8s
+      - platform: kubernetes
+      - AppNamespace[namespace]:
+          - WebDeployment[deployment]:
+              - image: "registry.example.com/web:2026.06"
+              - WebPod[pod]:
+                  - WebContainer[container]
+          - AppSecret[secret]
   - WebDeployment --> AppSecret:
       type: uses-secret
 ```
@@ -810,7 +894,8 @@ Common node properties: `provider` (`aws|azure|gcp|k8s|generic`), `platform`
 (`kubernetes|vm|serverless|managed`), `environment`, `region`, `zone`,
 `replicas`, `image`, `version`, `public`, `encrypted`, `managed`. Edge
 properties include `type`, `protocol` (`HTTPS|HTTP|TCP|UDP|gRPC|AMQP|Kafka`),
-`port`, `encrypted`, `internal`, and `direction`.
+`port`, `encrypted`, `internal`, and `direction`. Node sizing uses `width`
+under `layout:`.
 
 Validation checks node/edge vocabulary, endpoint references, namespace nesting
 for Kubernetes workloads and namespace-scoped resources, cluster placement and

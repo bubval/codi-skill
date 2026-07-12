@@ -2,19 +2,16 @@
 
 WebhookThreats[threat-model]:
   - Internet[trust-boundary]:
-      children:
-        - PartnerWebhook[external-entity]: "Third-party webhook sender"
-        - UserBrowser[external-entity]: "Signed-in customer browser"
+      - PartnerWebhook[external-entity]: "Third-party webhook sender"
+      - UserBrowser[external-entity]: "Signed-in customer browser"
   - EdgeTier[trust-boundary]:
-      children:
-        - Waf[process]: "Filters public traffic"
-        - AuthProxy[process]: "Validates OIDC session"
+      - Waf[process]: "Filters public traffic"
+      - AuthProxy[process]: "Validates OIDC session"
   - AppTier[trust-boundary]:
-      children:
-        - WebhookApi[process]:
-            controls: ["signature verification", "idempotency key"]
-        - EventQueue[data-store]:
-            encrypted: true
+      - WebhookApi[process]:
+          controls: ["signature verification", "idempotency key"]
+      - EventQueue[data-store]:
+          encrypted: true
   - UserBrowser --> AuthProxy:
       label: "OIDC login callback"
       encrypted: true
@@ -33,4 +30,3 @@ WebhookThreats[threat-model]:
   - WebhookApi --> EventQueue:
       label: "Publishes normalized event"
       encrypted: true
-

@@ -6,20 +6,19 @@ CheckoutPlatform[c4-container]:
       scope: true
       description: "Handles checkout, payment, and order creation"
   - CheckoutBoundary[system-boundary]:
-      label: "Checkout Platform"
-      children:
-        - WebApp[container]:
-            technology: "React"
-            description: "Collects cart, shipping, and payment details"
-        - CheckoutApi[container]:
-            technology: "Rust/Axum"
-            description: "Coordinates checkout workflow"
-        - OrderWorker[container]:
-            technology: "Rust worker"
-            description: "Creates orders and publishes events"
-        - CheckoutDb[database]:
-            technology: "PostgreSQL"
-            description: "Stores checkout sessions"
+      - label: "Checkout Platform"
+      - WebApp[container]:
+          technology: "React"
+          description: "Collects cart, shipping, and payment details"
+      - CheckoutApi[container]:
+          technology: "Rust/Axum"
+          description: "Coordinates checkout workflow"
+      - OrderWorker[container]:
+          technology: "Rust worker"
+          description: "Creates orders and publishes events"
+      - CheckoutDb[database]:
+          technology: "PostgreSQL"
+          description: "Stores checkout sessions"
   - PaymentGateway[external-software-system]: "External payment processor"
   - Shopper --> WebApp: "Submits checkout"
   - WebApp --> CheckoutApi:

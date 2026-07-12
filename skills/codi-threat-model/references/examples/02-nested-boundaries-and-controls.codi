@@ -2,23 +2,20 @@
 
 AdminConsoleThreats[threat-model]:
   - CorporateNetwork[trust-boundary]:
-      children:
-        - AdminBrowser[external-entity]: "Administrator browser"
-        - AdminConsole[process]:
-            controls: ["MFA", "session timeout", "device posture"]
+      - AdminBrowser[external-entity]: "Administrator browser"
+      - AdminConsole[process]:
+          controls: ["MFA", "session timeout", "device posture"]
   - ProductionNetwork[trust-boundary]:
-      children:
-        - AdminApi[process]:
-            privilege-level: elevated
-            controls: ["RBAC", "break-glass approval"]
-        - AuditLog[data-store]:
-            encrypted: true
-            controls: ["append-only", "retention lock"]
+      - AdminApi[process]:
+          privilege_level: elevated
+          controls: ["RBAC", "break-glass approval"]
+      - AuditLog[data-store]:
+          encrypted: true
+          controls: ["append-only", "retention lock"]
   - SecretsBoundary[trust-boundary]:
-      children:
-        - SecretsVault[data-store]:
-            encrypted: true
-            controls: ["envelope encryption", "rotation"]
+      - SecretsVault[data-store]:
+          encrypted: true
+          controls: ["envelope encryption", "rotation"]
   - AdminBrowser --> AdminConsole:
       label: "HTTPS admin session"
       encrypted: true
@@ -34,4 +31,3 @@ AdminConsoleThreats[threat-model]:
   - AdminApi --> AuditLog:
       label: "Writes admin audit event"
       encrypted: true
-

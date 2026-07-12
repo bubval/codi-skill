@@ -4,7 +4,7 @@ RepositoryPattern[class]:
   - Repository[interface]:
       stereotypes: ["port"]
       template_parameters:
-        - Entity
+        - name: Entity
       members:
         - "+ findById(id: UUID): User?"
         - "+ save(entity: User): void"

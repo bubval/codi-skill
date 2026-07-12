@@ -68,9 +68,9 @@ annotations.
 Examples:
 
 ```yaml
-Checkout[c4-container]:
-  - WebApp[container, scope]
-  - Payments[external-software-system, external]
+Checkout[c4-component]:
+  - WebApp[container, scope]: "Checkout web application"
+  - Payments[external-software-system, external]: "Payment provider"
 ```
 
 Parsed node fields:
@@ -79,6 +79,10 @@ Parsed node fields:
 |---|---|---|---|
 | `WebApp[container, scope]` | `WebApp` | `container` | `scope` |
 | `Payments[external-software-system, external]` | `Payments` | `external-software-system` | `external` |
+
+Annotations are type-specific: `scope` marks the C4 element in scope for its
+level (a `software-system` in c4-container, a `container` in c4-component),
+and `external` marks external elements.
 
 Invalid bracket annotations:
 
@@ -91,6 +95,10 @@ Customer[, external]
 
 The name, type, and each comma-separated segment must be non-empty after
 trimming whitespace.
+
+Node and edge **type names** are dash-case (`trust-boundary`, `composite-state`,
+`external-software-system`). Property **keys** are snake_case (`flow_id`,
+`entry_action`, `source_role`). Do not mix the two conventions.
 
 ## Diagram Types
 
@@ -106,9 +114,81 @@ built-in types listed in [diagram-types.md](./diagram-types.md). Unknown diagram
 types require `--type-path <file.py>` for custom expansion, validation, and
 layout.
 
-## List Items
+## Property Buckets
 
-Every diagram body item is a YAML list item.
+Every property on a diagram, node, or edge belongs to exactly one of three
+buckets:
+
+| Bucket | How written | Contents |
+|---|---|---|
+| **layout** | `layout:` sub-map | `direction`, `rank_gap`, `node_gap`, `lane_gap`, `edge_gap`, `algorithm`, `width`, `height` |
+| **style** | `style:` sub-map | `fill`, `stroke`, `stroke_width`, `text`, `muted_text`, `opacity`, `dash`, `line`, `shape` |
+| **semantic** | bare top-level keys | everything domain-specific: `technology`, `protocol`, `guard`, `start`, `members`, `threats`, … |
+
+Only `layout` and `style` are nested. Semantic properties stay top-level.
+
+```yaml
+- QueryApi[container]:
+    technology: "Go service"        # semantic — top-level
+    layout:
+      width: 220                    # layout — nested
+    style:
+      fill: "#e8f5e9"               # style — nested
+      stroke: "#4caf50"
+```
+
+### Layout keys
+
+`layout:` is valid on the diagram root and on nodes. Its keys split into two
+classes:
+
+- **container-layout** — `direction`, `rank_gap`, `node_gap`, `lane_gap`,
+  `edge_gap`, `algorithm`. These arrange a node's *children*. On a leaf node
+  they trigger a warning because there is nothing to arrange.
+- **self-layout** — `width`, `height`. These size the node itself and are valid
+  on any node, leaf included.
+
+Not every type reads every key: `lane_gap`/`edge_gap` are activity-only,
+`algorithm` is unstructured-only. `gantt` and `sequence` are time-based and
+have **no** `layout:` keys at all. Edges never take `layout:`.
+
+### Style keys
+
+`style:` is valid on any node and any edge (not on the diagram root — use the
+`theme:` directive for global appearance). Canonical key names only:
+
+| Key | Meaning |
+|---|---|
+| `fill` | Fill color |
+| `stroke` | Stroke/border color |
+| `stroke_width` | Stroke width |
+| `text` | Text color |
+| `muted_text` | Secondary text color |
+| `opacity` | Opacity 0..1 |
+| `line` | Line treatment: `solid`, `dashed`, or `dashed-border` |
+| `dash` | Custom dash pattern, e.g. `[8, 5]` |
+| `shape` | Renderer shape override where supported (e.g. unstructured) |
+
+There are **no aliases**. `color`, `border`, `border_color`, `border_width`,
+`text_color`, and the old bare `style: dashed` scalar are not accepted.
+`style:` is exclusively a map; the dashed shorthand is now the `line` key
+inside it.
+
+### Block form only
+
+`layout:` and `style:` maps must be written in YAML block form. Inline flow
+maps are not supported and the language server warns on them:
+
+```yaml
+- layout:                     # block form — the only supported form
+    direction: TB
+
+- layout: { direction: TB }   # flow form — NOT supported
+```
+
+## Node Bodies
+
+A node's value can be a scalar, a mapping, or a list.
 
 ### Bare Node Item
 
@@ -132,23 +212,30 @@ Creates a node with:
 
 A scalar string value becomes `description`.
 
-### Node With Properties
+### Mapping Body — properties only
+
+The mapping body is the canonical form for **leaf** nodes: properties, no
+children.
 
 ```yaml
 - API[container]:
     description: "Public API"
     technology: "Rust"
+    style:
+      fill: "#dbeafe"
     links:
       docs: "https://example.test/api"
 ```
 
-Special node properties:
+Reserved node property keys:
 
 | Key | Meaning |
 |---|---|
 | `description` | Node description string |
-| `children` | Nested node/edge list |
-| `regions` | State-machine regions map |
+| `label` | Display label override |
+| `layout` | Layout sub-map (see Property Buckets) |
+| `style` | Style sub-map (see Property Buckets) |
+| `regions` | State-machine orthogonal regions map |
 | `members` | Class-like member strings |
 | `refs` | Node references, usually scanner or source references |
 | `links` | External links attached to the node |
@@ -156,27 +243,67 @@ Special node properties:
 Other properties are preserved as node props and interpreted by validators,
 layout, or rendering according to diagram type.
 
-### Node With Direct Nested Sequence
+### List Body — property items plus children
+
+The list body is the canonical form for **containers** (and it is exactly how
+the diagram root works). Children are plain list items; there is no `children:`
+keyword. Properties are written as single-key list items, one key per item:
 
 ```yaml
-- Core[package]:
-    - User[class]
-    - Order[class]
+- Analytics[system-boundary]:
+    - label: "SaaS Analytics Platform"     # property item
+    - layout:                              # property item (block map)
+        direction: TB
+    - style:
+        fill: "#f8fafc"
+    - Dashboard[container]:                # child node (leaf: mapping body)
+        technology: "React SPA"
+    - Api[container]                       # child node
+    - Dashboard --> Api: "calls"           # child edge
 ```
 
-A sequence value is interpreted as either:
+Each list item is classified in this order:
 
-- members, if the items look like member strings, or
-- nested children, if the items look like nodes or edges.
+1. **Property item** — a single-key mapping whose key is a reserved or
+   type-semantic property (`layout`, `style`, `label`, `description`,
+   `members`, `regions`, `provider`, …) → applied to the owning node.
+2. **Edge item** — matches arrow syntax → edge.
+3. **Node item** — matches `Name[type]` → child node.
+4. **Member string** — a plain string, in a class-like type → member line.
 
-For `class`, `interface`, and `enum` nodes, a plain string sequence is a member
-list.
+This is required by YAML itself: a mapping key and a sequence item cannot
+coexist at the same indentation level, so a node with both properties and
+children must use the list body with property items.
+
+The `children:` keyword from older CoDi versions is **removed**: not accepted,
+not emitted, not documented. Children are simply the node/edge items in the
+body list.
+
+### Members (class-like nodes)
+
+Member strings never look like `Name[type]` or arrow items, so a plain string
+list under a `class`, `interface`, or `enum` is a member list:
 
 ```yaml
 - User[class]:
     - "+id: UUID"
     - "+email: String"
 ```
+
+The explicit `members:` key also works, and is the right choice when the node
+carries other properties in a mapping body:
+
+```yaml
+- User[class]:
+    members:
+      - "+id: UUID"
+      - "+changeEmail(email: String): void"
+    style:
+      stroke: "#64748b"
+```
+
+Member strings and `Name[type]` children can coexist in one list body — string
+items become members, bracketed items become nested types.
 
 ### Edge Item
 
@@ -193,16 +320,21 @@ Creates an edge from `Browser` to `API` with label `POST /login`.
     label: "POST /login"
     protocol: "HTTPS"
     type: "calls"
+    style:
+      stroke: "#94a3b8"
+      line: dashed
 ```
 
-Special edge properties:
+Reserved edge property keys:
 
 | Key | Meaning |
 |---|---|
 | `label` | Edge label string |
+| `style` | Style sub-map (stroke, stroke_width, dash, line, opacity) |
 | `links` | External links attached to the edge |
 
-Other properties are preserved as edge props and interpreted by the diagram type.
+Other properties (`type`, `protocol`, `guard`, `trigger`, `port`, …) are
+semantic and stay top-level. Edges never take `layout:`.
 
 ### Untyped Mapping Item
 
@@ -242,6 +374,10 @@ or mapping properties:
     label: "message"
     encrypted: true
 ```
+
+One exception: `gantt` does not use arrow edges at all. Gantt dependencies are
+declared with the `depends_on:` property on the dependent task or milestone
+(see [diagram-types.md](./diagram-types.md)).
 
 ## Sequence Message Grammar
 
@@ -316,26 +452,30 @@ Fragments:
 ```
 
 The fragment operator is stored as the sequence target; any remaining text is
-stored as the guard.
+stored as the guard. Fragments nest their messages implicitly as indented list
+items.
 
 ## Nested Children
 
-Container nodes can hold nested child nodes through `children`:
+Container nodes hold nested children as plain list items in their body:
 
 ```yaml
 - CheckoutSystem[system-boundary]:
-    children:
-      - WebApp[container]: "Customer UI"
-      - API[container]: "Backend API"
-      - WebApp --> API: "HTTPS"
+    - WebApp[container]: "Customer UI"
+    - API[container]: "Backend API"
+    - WebApp --> API: "HTTPS"
 ```
 
 The parser recursively parses the nested list. Edges are collected into the
-diagram edge list, while child nodes are attached to the parent node.
+diagram edge list, while child nodes are attached to the parent node. A node is
+a container when its type is a declared container type for the diagram
+(boundaries, packages, swimlanes, groups, composite states, trust boundaries,
+clusters, …) or when it has children.
 
 ## State-Machine Regions
 
-State machines have special `regions` support:
+State machines keep the explicit `regions` key — it is semantic (orthogonal
+regions), not generic nesting:
 
 ```yaml
 - Processing[composite-state]:
@@ -352,29 +492,8 @@ State machines have special `regions` support:
 
 Each region becomes a child node of type `region`. Edges declared inside nested
 state-machine scopes receive internal `__scope` metadata so the layout and
-normalization code can resolve scoped names.
-
-## Members
-
-Class-like nodes can use `members`:
-
-```yaml
-- User[class]:
-    members:
-      - "+id: UUID"
-      - "+changeEmail(email: String): void"
-```
-
-or direct member list syntax:
-
-```yaml
-- User[class]:
-    - "+id: UUID"
-    - "+changeEmail(email: String): void"
-```
-
-The parser stores members as strings. The class validator interprets field and
-method details.
+normalization code can resolve scoped names. Plain (non-region) composite-state
+children nest implicitly like any other container.
 
 ## Links
 
@@ -431,14 +550,20 @@ Common reserved keys:
 - `sources`
 - `theme`
 - `overlay`
-- `direction`
-- `rank_gap`
-- `node_gap`
-- `edge_gap`
-- `lane_gap`
-- `threats`
+- `layout`
+- `threats` (threat-model)
 
-Gantt-only reserved keys:
+`layout` replaces the flat `direction`/`rank_gap`/`node_gap`/`edge_gap`/
+`lane_gap` directives from older CoDi versions:
+
+```yaml
+Pipeline[flowchart]:
+  - layout:
+      direction: LR
+      rank_gap: 160
+```
+
+Gantt-only reserved keys (semantic configuration, not `layout:`):
 
 - `timeline`
 - `calendar`
@@ -449,13 +574,10 @@ Gantt-only reserved keys:
 - `critical_path`
 - `columns`
 
-Unstructured-only reserved key:
-
-- `algorithm`
-
 Reserved keys that are diagram directives are copied into diagram props. Other
 reserved keys are skipped by the generic node parser and consumed later by
-validators or type-specific logic.
+validators or type-specific logic. Unknown property items on built-in types
+produce warnings.
 
 ## YAML Notes
 

@@ -2,24 +2,62 @@
 
 ## Declaration
 
+A minimal valid `c4-code` diagram:
+
 ```yaml
-DiagramName[c4-code]:
-  - NodeName[type]
-  - NodeName --> OtherNode: "relationship label"
+PaymentModule[c4-code]:
+  - PaymentComponent[component, scope]: "Payments component"
+  - PaymentService[class]:
+      - "+ authorize(request: PaymentRequest): PaymentResult"
+  - PaymentPort[interface]:
+      - "+ authorize(request: PaymentRequest): PaymentResult"
+  - PaymentService --> PaymentPort:
+      type: implements
+      label: "implements port"
 ```
 
 ## Shared CoDi Grammar
 
 All CoDi diagrams are YAML. A file contains exactly one top-level mapping key with a bracketed diagram type. The top-level value is a YAML list. Node types use bracket annotations. Edges use `-->`, `<--`, or `<-->`.
 
+Every property belongs to one of three buckets: `layout:` (nested map), `style:` (nested map), or semantic keys (bare top-level). Property keys are snake_case; node/edge type names are dash-case. `layout:` and `style:` maps are written in YAML block form only — inline `{ }` maps are not supported.
+
 ## Type-Specific Notes
 
-- Use a scoped component and code/package boundaries to organize internals.
-- Class-like members use the same string member convention as class diagrams.
+- Use a scoped component and code/package boundaries to organize internals; package and boundary children are plain nested list items.
+- Class-like members use the same string conventions as class diagrams: the string-list shorthand or explicit `members:`.
+- Member strings and nested `Name[type]` children can coexist in one class body.
 
-## Nesting
+## Nesting: The Uniform Body Rule
 
-Use `children:` for nested structures when this diagram type supports containers, boundaries, packages, regions, lanes, groups, or swimlanes. Direct nested YAML sequences are accepted for some class-like/member patterns when examples show that form.
+There is no `children:` keyword. Every body — the diagram body and any container body — is a YAML list, and each item is one of:
+
+1. A **property item**: a single-key mapping such as `- layout:` (block map), `- style:` (block map), or `- label: "x"`, applied to the owning node.
+2. An **edge**: arrow syntax.
+3. A **child node**: `Name[type]`.
+4. A **member string** (class-like types only).
+
+A leaf node with only properties uses a plain mapping body instead:
+
+```yaml
+- Leaf[type]:
+    description: "properties only"
+    style:
+      fill: "#eef2ff"
+```
+
+A container with properties AND children uses the list body with property items:
+
+```yaml
+- Parent[type]:
+    - layout:
+        direction: TB
+    - style:
+        fill: "#f8fafc"
+    - ChildA[type]
+    - ChildB[type]
+    - ChildA --> ChildB
+```
 
 ## Labels and Properties
 

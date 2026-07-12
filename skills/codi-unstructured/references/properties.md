@@ -1,15 +1,45 @@
 # CoDi Unstructured Properties
 
-## Diagram Properties
+Properties belong to one of three buckets: **layout** (nested under `layout:`), **style** (nested under `style:`), and **semantic** (bare top-level keys). `layout:` and `style:` must be written in YAML block form; inline `{ }` maps are not supported. There are no property aliases — one canonical snake_case name per concept.
+
+## Layout Properties (`layout:` map)
 
 | Name | Type | Meaning |
 |---|---|---|
-| `algorithm` | organic | force | force-directed | fdg | Layout algorithm. |
-| `direction` | TB | LR | RL | BT | Preferred graph direction. |
+| `algorithm` | organic \| force \| force-directed \| fdg | Layout algorithm (unique to unstructured). |
+| `direction` | TB \| LR \| RL \| BT | Graph direction for child arrangement. |
 | `rank_gap` | non-negative number | Space between graph ranks. |
 | `node_gap` | non-negative number | Space between sibling nodes. |
+| `width` | positive number | Node width in layout units (valid on any node). |
+| `height` | positive number | Node height in layout units (valid on any node). |
 
-## Node Properties
+Container-layout keys (direction, gaps, algorithm) apply to the diagram root and to container nodes, where they arrange children; on a leaf node they warn. `width`/`height` size the node itself and are valid on any node. Edges never take `layout:`.
+
+## Style Properties (`style:` map)
+
+| Name | Type | Meaning |
+|---|---|---|
+| `fill` | color string | Fill color. |
+| `stroke` | color string | Stroke/border color. |
+| `stroke_width` | number | Stroke width. |
+| `text` | color string | Text color. |
+| `muted_text` | color string | Secondary text color. |
+| `opacity` | 0..1 | Opacity. |
+| `line` | solid \| dashed \| dashed-border | Line treatment (replaces the old `style:` scalar). |
+| `dash` | list[number] | Custom dash pattern, for example `[8, 5]`. |
+| `shape` | string | Renderer shape override such as `hexagon` or `cylinder`; the `[type]` annotation keeps carrying meaning. |
+
+Edges accept `style:` too, with `stroke`, `stroke_width`, `opacity`, `line`, and `dash`. The diagram root takes no `style:`; use the `theme:` directive for global appearance.
+
+## Semantic Properties
+
+Semantic properties stay top-level next to `layout:`/`style:`.
+
+### Diagram Directives
+
+No diagram-specific directives. Shared render targets are CLI flags, not source properties.
+
+### Node Properties
 
 | Name | Type | Meaning |
 |---|---|---|
@@ -17,36 +47,20 @@
 | `label` | string | Display label override. |
 | `links` | list/object | External links attached to the node. |
 | `refs` | list | Source references or related `.codi` files. |
-| `shape` | string | Renderer shape override where supported. |
-| `width` | positive number | Node width in layout units. |
-| `height` | positive number | Node height in layout units. |
-| `fill` | color string | Node fill color. |
-| `stroke` | color string | Node stroke color. |
-| `border` | color string | Border color alias. |
-| `text` | color string | Text color. |
-| `border_width` | number | Border width. |
-| `stroke_width` | number | Stroke width. |
-| `algorithm` | organic | force | Nested layout algorithm. |
-| `direction` | TB | LR | RL | BT | Nested layout direction. |
-| `children` | list | Nested child nodes and edges. |
 | `icon` | string | Renderer icon name. |
-| `style` | string | Visual style such as dashed. |
-| `opacity` | number | Node opacity. |
+| `members` | list[string] | Member strings for class-like boxes. |
+| `layout_only` | boolean | Marks a layout helper/affinity group. |
 
-## Edge Properties
+### Edge Properties
 
 | Name | Type | Meaning |
 |---|---|---|
 | `label` | string | Relationship label. |
-| `style` | string | Edge style such as dashed. |
-| `stroke` | color string | Edge color. |
-| `stroke_width` | number | Edge width. |
-| `dash` | list[number] | Custom dash pattern. |
-| `opacity` | number | Edge opacity. |
 | `links` | list/object | External links attached to the edge. |
 
 ## Property Rules
 
+- Canonical names only: `color`, `border`, `border_color`, `border_width`, `text_color`, `tech`, and the bare `style:` scalar are gone. Use `fill`, `stroke`, `stroke_width`, `text`, `technology`, and `line:` inside `style:`.
 - Unknown properties may fail validation on strict diagram types.
 - Use quoted strings for labels or descriptions containing punctuation, colons, dates, or symbols.
 - Prefer explicit booleans (`true`/`false`) for boolean fields.
